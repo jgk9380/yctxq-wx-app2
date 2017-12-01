@@ -1,0 +1,43 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+server:
+  port: 80
+spring:
+  application:
+    name: service-zuul
+zuul:
+  routes:
+#    api-a:
+#      path: /api-a/**
+#      serviceId: service-ribbon
+#    api-b:
+#      path: /api-b/**
+#      serviceId: service-feign
+
+
+
+      wx-front:
+        path: /wx-front/**
+        url: http://www.cu0515.com:8030/wxfront/
+
+      wx-html:
+        path: /*.html
+        url: http://www.cu0515.com:8030/wxfront/
+
+      wx-back:
+            path: /**
+            url: http://www.cu0515.com:8888/
+
+#   wx-root:
+#      path: /**
+#      url: http://127.0.0.1:4200/
+
+
+#首先我们来回忆一下上篇文章我们配置路由规则的那两行代码：
+#zuul.routes.api-a.path=/api-a/**
+#zuul.routes.api-a.serviceId=feign-consumer
+#我们说当我的访问地址符合/api-a/**规则的时候，会被自动定位到feign-consumer服务上去，不过两行代码有点麻烦，我们可以用下面一行代码来代替，如下：
+#zuul.routes.feign-consumer=/api-a/**
+
