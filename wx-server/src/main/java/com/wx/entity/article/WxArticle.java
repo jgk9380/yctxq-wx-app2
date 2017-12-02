@@ -1,4 +1,4 @@
-package com.wx.entity;
+package com.wx.entity.article;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +11,7 @@ import java.util.Date;
 public class WxArticle {
     @Id
     @Column
-    Long Id;
+    Long id;
     @Column
     String title;
     @Column
@@ -44,17 +44,17 @@ public class WxArticle {
     @Column
 //    FAVORITE_COUNT	N	INTEGER	Y
     Integer favoriteCount;
-    @Column
+    @Column(name="FORWARD_COUNT")
 //    FORWARD_COUNT
-    Integer forwardCount;
+    Integer shareCount;
 
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getTitle() {
@@ -145,12 +145,12 @@ public class WxArticle {
         this.favoriteCount = favoriteCount;
     }
 
-    public Integer getForwardCount() {
-        return forwardCount;
+    public Integer getShareCount() {
+        return shareCount;
     }
 
-    public void setForwardCount(Integer forwardCount) {
-        this.forwardCount = forwardCount;
+    public void setShareCount(Integer shareCount) {
+        this.shareCount = shareCount;
     }
 
     @Override
@@ -160,12 +160,12 @@ public class WxArticle {
 
         WxArticle wxArticle = (WxArticle) o;
 
-        return Id.equals(wxArticle.Id);
+        return id.equals(wxArticle.id);
     }
 
     @Override
     public int hashCode() {
-        return Id.hashCode();
+        return id.hashCode();
     }
 
     public Integer getType() {
