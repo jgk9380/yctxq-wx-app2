@@ -2,3 +2,16 @@
   height: 2em;
   width: 2em;
 }
+
+.second-title{
+  color: #437bff;
+  font-size: 1.2em;
+}
+
+ul{
+  list-style-type: none;
+}
+
+li{
+  margin-top:0.5em ;
+}

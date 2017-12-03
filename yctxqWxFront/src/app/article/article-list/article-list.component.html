@@ -1,8 +1,12 @@
+<h3 class="text-center">盐城通信圈</h3>
+<span class="second-title">{{getDate()|date:"yyyy-MM-dd "}}</span>
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="second-title">通信新闻</span>
 <div class="container-fluid">
   <ul>
     <li *ngFor="let article of articleList">
       <div class="row">
-        <div class="col-xs-10">
+        <div class="col-offset-xs-1 col-xs-9">
           <span class="title">{{article.title}}</span>
         </div>
         <div class="col-xs-2">

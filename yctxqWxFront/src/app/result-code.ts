@@ -1,9 +1,5 @@
-export class ResultCode<T> implements Serializable {
-
+export class ResultCode{
   code: number;
-
   msg: string;
-
-  T: any;
-
+  data: any;
 }
