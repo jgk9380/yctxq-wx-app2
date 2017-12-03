@@ -1,0 +1,16 @@
+<div class="container-fluid">
+  <ul>
+    <li *ngFor="let article of articleList">
+      <div class="row">
+        <div class="col-xs-10">
+          <span class="title">{{article.title}}</span>
+        </div>
+        <div class="col-xs-2">
+          <img class="titleImg" [src]='getImgUrl(article.pictureUrl)'  alt="">
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<!--<img src={{'http://www.cu0515.com:8030/wd'+article.pictureUrl}} alt=""/>-->

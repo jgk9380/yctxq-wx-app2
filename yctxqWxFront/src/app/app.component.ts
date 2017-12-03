@@ -16,7 +16,11 @@ export class AppComponent implements OnInit{
 
   ngOnInit(){
     let code = this.wxCodeService.getRequestParams()["code"];
-    if(!code) code="authdeny";
+
+    if(!code)
+      //todo to删除,用于测试
+      code="8346102";
+
     console.log("code="+code)
     this.wxCodeService.code = code;
     // this.wxCodeService.initWxUser();
@@ -24,3 +28,4 @@ export class AppComponent implements OnInit{
   }
 
 }
+

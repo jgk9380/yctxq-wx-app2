@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {unescape} from "querystring";
+
 import {HttpClient} from "@angular/common/http";
 import "rxjs/add/observable/forkJoin";
 import {ToasterService, ToasterConfig} from "angular2-toaster";
@@ -15,7 +15,6 @@ import {WxCodeService} from "../wx-code.service";
 export class BindComponent implements OnInit {
 
   // baseUrl = "http://127.0.0.1";
-
   // url = "http://www.cu0515.com/wx/codeToOpenId/";
   wxUser: any;
   authCode: string;
@@ -37,21 +36,8 @@ export class BindComponent implements OnInit {
   }
 
   ngOnInit() {
-    //let code=this.getRequestParams()["code"];
-    // let code=this.wxCodeService.code;
-    // if (!code) {
-    //   code = "authdeny";
-    // }
-    // var x = this.httpClient.get(this.baseUrl + "/wx/codeToOpenId/" + code).subscribe(data => {
-    //     var tempResult: any = data;
-    //     this.wxUser = tempResult.data;
-    //     this.newTele = this.wxUser.tele;
-    //     console.log("wxUser=" + JSON.stringify(this.wxUser));
-    //   }
-    // );
-    // alert("in bind.component serv.wxUser=:"+JSON.stringify(this.wxCodeService.wxUser));
     //todo 应该改造为service中返回observale
-    var x = this.httpClient.get(this.wxCodeService.baseUrl + "/wx/codeToOpenId/" + this.wxCodeService.code).subscribe(data => {
+    var x = this.httpClient.get(this.wxCodeService.getCodeToWxUserUrl() + this.wxCodeService.code).subscribe(data => {
         var tempResult: any = data;
         this.wxUser = tempResult.data;
         this.newTele = this.wxUser.tele;
@@ -199,7 +185,7 @@ export class BindComponent implements OnInit {
       console.log("str=" + str);
       var strs = str.split("&");
       for (var i = 0; i < strs.length; i++) {
-        theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+        theRequest[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
       }
     }
     console.log("theRequest=" + JSON.stringify(theRequest))

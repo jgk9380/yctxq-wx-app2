@@ -31,7 +31,7 @@ public class WxArticle {
     Date expiresDate;
     @Column
 //    PICTURE_ID	N	NUMBER	Y
-    long pictureId;
+    Long pictureId;
     @Column
 //    CONTENT	N	CLOB	Y
     String content;
@@ -44,7 +44,7 @@ public class WxArticle {
     @Column
 //    FAVORITE_COUNT	N	INTEGER	Y
     Integer favoriteCount;
-    @Column(name="FORWARD_COUNT")
+    @Column()
 //    FORWARD_COUNT
     Integer shareCount;
 
@@ -105,11 +105,11 @@ public class WxArticle {
         this.expiresDate = expiresDate;
     }
 
-    public long getPictureId() {
+    public Long getPictureId() {
         return pictureId;
     }
 
-    public void setPictureId(long pictureId) {
+    public void setPictureId(Long pictureId) {
         this.pictureId = pictureId;
     }
 

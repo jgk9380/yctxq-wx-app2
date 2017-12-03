@@ -14,6 +14,7 @@ public class WxArticleDiscuss {
     String discussOpenId;
     @Column
     String discussContent;
+
     @Column
     Long parentId;
     @Column

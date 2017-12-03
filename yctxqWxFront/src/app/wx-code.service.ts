@@ -5,8 +5,8 @@ import {Observable} from "rxjs";
 
 @Injectable()
 export class WxCodeService {
-  baseUrl = "http://www.cu0515.com";
-  //baseUrl = "http://127.0.0.1";
+  //baseUrl = "http://www.cu0515.com";
+  baseUrl = "http://127.0.0.1:8888";
   code:string;
   wxUser:any;
   constructor(private  httpClient:HttpClient){}
@@ -52,5 +52,13 @@ export class WxCodeService {
     }
     console.log("theRequest=" + JSON.stringify(theRequest))
     return theRequest;
+  }
+
+
+  getCodeToWxUserUrl(){
+    if(!this.code||this.code.length==7)
+      return this.baseUrl+  "/wx/codeToOpenIdTestTest/";
+    else
+      return this.baseUrl+ "/wx/codeToOpenId/";
   }
 }

@@ -42,14 +42,14 @@ public class WxArticleController {
 
     //新闻列表:参数:openId
     @GetMapping("/newsList/{openId}")
-    List<WxArticle> getNewList(@PathVariable("openId") String openId) {
-        return wxArticleDao.findAllNews();
+    ResultCode getNewList(@PathVariable("openId") String openId) {
+        return new ResultCode(0, "ok", wxArticleDao.findAllNews().subList(0,10));
     }
 
     //通信知识列表：openId
     @GetMapping("/knowledgesList/{openId}")
-    List<WxArticle> getKnowledgeList(@PathVariable("openId") String openId) {
-        return wxArticleDao.findAllKnowledges();
+    ResultCode getKnowledgeList(@PathVariable("openId") String openId) {
+        return new ResultCode(0, "ok",wxArticleDao.findAllKnowledges());
     }
 
     //阅读历史：openId,articleId,shareOpenId
@@ -69,7 +69,7 @@ public class WxArticleController {
         wxArticleReadHistory.setReaderOpenId(openId);
         wxArticleReadHistory.setShareId(shareId);
         wxArticleReadHistory.setReadDate(new Date());
-        WxArticleReadHistory result= wxArticleReadHistoryDao.save(wxArticleReadHistory);
+        WxArticleReadHistory result = wxArticleReadHistoryDao.save(wxArticleReadHistory);
         return new ResultCode(0, "success", result);
     }
 
@@ -90,7 +90,7 @@ public class WxArticleController {
         //todo wxArticlePraise.setShareOpenId(sharerOpenId);
         wxArticlePraise.setShareId(shareId);
         wxArticlePraise.setPraiseDate(new Date());
-        WxArticlePraise result  = wxArticlePraiseDao.save(wxArticlePraise);
+        WxArticlePraise result = wxArticlePraiseDao.save(wxArticlePraise);
         return new ResultCode(0, "ok", result);
     }
 
@@ -98,7 +98,7 @@ public class WxArticleController {
     @PostMapping("/shareArticle/{articleId}/{openId}/{shareType}/{shareId}")
     @Transactional
     ResultCode shareArticle(@PathVariable("openId") String openId, @PathVariable("articleId") Long articleId
-            , @PathVariable("shareType") String shareType,@PathVariable("shareId") Long shareId) {
+            , @PathVariable("shareType") String shareType, @PathVariable("shareId") Long shareId) {
         //1、shareCount+1
         WxArticle wxArticle = wxArticleDao.findById(articleId);
         wxArticle.setShareCount(wxArticle.getShareCount() + 1);
@@ -113,7 +113,7 @@ public class WxArticleController {
         wxArticleShareHistory.setShareDate(new Date());
         //记录上一个分享人;
         wxArticleShareHistory.setShareId(shareId);
-        WxArticleShareHistory result= wxArticleShareHistoryDao.save(wxArticleShareHistory);
+        WxArticleShareHistory result = wxArticleShareHistoryDao.save(wxArticleShareHistory);
         //返回本次shareId
         return new ResultCode(0, "ok", result);
 
@@ -124,22 +124,32 @@ public class WxArticleController {
     @PostMapping("/favoriteArticle/{articleId}/{openId}/{shareId}")
     @Transactional
     ResultCode favoriteArticle(@PathVariable("openId") String openId, @PathVariable("articleId") Long articleId
-            ,@PathVariable("shareId") long shareId) {
+            , @PathVariable("shareId") long shareId) {
 
         //1、favoriteCount+1
         WxArticle wxArticle = wxArticleDao.findById(articleId);
         wxArticle.setFavoriteCount(wxArticle.getFavoriteCount() + 1);
         wxArticleDao.save(wxArticle);
 
-        //2、记录share信息.
+        //2、记录favorite信息.
         WxArticleFavorite wxArticleFavorite = new WxArticleFavorite();
         wxArticleFavorite.setId(wxUtils.getSeqencesValue().longValue());
         wxArticleFavorite.setArticleId(articleId);
         wxArticleFavorite.setFavoriteOpenId(openId);
         wxArticleFavorite.setFavoriteDate(new Date());
         wxArticleFavorite.setShareId(shareId);
-        WxArticleFavorite result= wxArticleFavoriteDao.save(wxArticleFavorite);
+        WxArticleFavorite result = wxArticleFavoriteDao.save(wxArticleFavorite);
         return new ResultCode(0, "ok", result);
+    }
+
+    //回复列表:articleId,parentId
+    @GetMapping("/articleDiscussList/{articleId}/{parentId}")
+    ResultCode articleDiscussList(@PathVariable("articleId") Long articleId, @PathVariable("parentId") Long parentId) {
+        if (parentId == 0)
+            return new ResultCode(0, "ok", wxArticleDiscussDao.findRootDiscuss(articleId));
+        else
+            return new ResultCode(0, "ok", wxArticleDiscussDao.findByArticleIdAndAndParentId(articleId, parentId));
+
     }
 
     //回复：openId,articleId,parentId
@@ -147,42 +157,26 @@ public class WxArticleController {
     @PostMapping("/discussArticle/{articleId}/{openId}/{parentId}/{shareId}")
     @Transactional
     ResultCode discussArticle(@PathVariable("openId") String openId, @PathVariable("articleId") Long articleId
-                               ,@PathVariable("parentId") Long parentId,@PathVariable("shareId") Long shareId
-                               ,@RequestBody Map map ) {
-
-//        //1、shareCount+1
-//        WxArticle wxArticle = wxArticleDao.findById(articleId);
-//        wxArticle.setFavoriteCount(wxArticle.getFavoriteCount() + 1);
-//        wxArticleDao.save(wxArticle);
-
-        //2、记录share信息.
-        WxArticleDiscuss  wxArticleDiscuss = new WxArticleDiscuss();
+            , @PathVariable("parentId") Long parentId, @PathVariable("shareId") Long shareId
+            , @RequestBody Map map) {
+        //1、记录回复信息.
+        WxArticleDiscuss wxArticleDiscuss = new WxArticleDiscuss();
         wxArticleDiscuss.setId(wxUtils.getSeqencesValue().longValue());
         wxArticleDiscuss.setArticleId(articleId);
         wxArticleDiscuss.setParentId(parentId);
         wxArticleDiscuss.setDiscussOpenId(openId);
+        wxArticleDiscuss.setDiscussContent((String) map.get("content"));
         wxArticleDiscuss.setDiscussDate(new Date());
         wxArticleDiscuss.setShareId(shareId);
-        WxArticleDiscuss result=wxArticleDiscussDao.save(wxArticleDiscuss);
+        WxArticleDiscuss result = wxArticleDiscussDao.save(wxArticleDiscuss);
         return new ResultCode(0, "ok", result);
     }
 
-    //回复列表:articleId,parentId
-    //回复：openId,articleId,parentId
-    //requestBody:content
-    @GetMapping("/articleDiscussList/{articleId}/{parentId}")
-    ResultCode articleDiscussList( @PathVariable("articleId") Long articleId ,@PathVariable("parentId") Long parentId ) {
-        if(parentId==0)
-            return new ResultCode(0,"ok",wxArticleDiscussDao.findRootDiscuss(articleId));
-        else
-            return new ResultCode(0,"ok",wxArticleDiscussDao.findByArticleIdAndAndParentId(articleId,parentId));
-
-    }
 
     //我的收藏：openId,articleId,shareId
     @GetMapping("/myFavoriteList/{openId}")
-    ResultCode myFavoriteList( @PathVariable("openId")String openId ) {
-            return new ResultCode(0,"ok",wxArticleFavoriteDao.findByFavoriteOpenId(openId));
+    ResultCode myFavoriteList(@PathVariable("openId") String openId) {
+        return new ResultCode(0, "ok", wxArticleFavoriteDao.findByFavoriteOpenId(openId));
     }
 
 }

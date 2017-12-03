@@ -147,6 +147,16 @@ public class WxServiceController {
         }
     }
 
+    @RequestMapping(value = "/codeToOpenIdTestTest/{code}", method = {RequestMethod.GET})
+    @ResponseBody
+    public ResultCode oauthTest(@PathVariable("code") Long code) {
+        //1 用于测试环境 code 代表wxUserId;
+        String openId = null;
+        WxUser wxUser = wxUserDao.findById(code);
+        wxUser.setWxApp(null);
+        return new ResultCode<>(0, "ok", wxUser);
+
+    }
 
     @RequestMapping(path = "/jsTicket/{url}", method = {RequestMethod.GET})
     @ResponseBody
