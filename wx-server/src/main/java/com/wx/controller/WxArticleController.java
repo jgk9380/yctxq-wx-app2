@@ -1,8 +1,13 @@
 package com.wx.controller;
 
+import com.wx.dao.WxQrCodeDao;
+import com.wx.dao.WxUserDao;
 import com.wx.dao.article.*;
+import com.wx.entity.WxQrCode;
+import com.wx.entity.WxUser;
 import com.wx.entity.article.*;
 import com.wx.mid.util.WxUtils;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +21,8 @@ import java.util.Map;
 public class WxArticleController {
     @Autowired
     WxArticleDao wxArticleDao;
+    @Autowired
+    WxUserDao wxUserDao;
 
     @Autowired
     WxUtils wxUtils;
@@ -36,6 +43,8 @@ public class WxArticleController {
 
     @Autowired
     WxArticleDiscussDao wxArticleDiscussDao;
+    @Autowired
+    WxQrCodeDao wxQrCodeDao;
 
     //todo ?所有分享上一个分享痕迹。 shareId
 
@@ -43,13 +52,30 @@ public class WxArticleController {
     //新闻列表:参数:openId
     @GetMapping("/newsList/{openId}")
     ResultCode getNewList(@PathVariable("openId") String openId) {
-        return new ResultCode(0, "ok", wxArticleDao.findAllNews().subList(0,10));
+        return new ResultCode(0, "ok", wxArticleDao.findAllNews().stream().map(x -> {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", x.getId());
+            jsonObject.put("title", x.getTitle());
+            jsonObject.put("pictureUrl", x.getPictureUrl());
+            return jsonObject;
+
+        }).toArray());
     }
+
 
     //通信知识列表：openId
     @GetMapping("/knowledgesList/{openId}")
     ResultCode getKnowledgeList(@PathVariable("openId") String openId) {
-        return new ResultCode(0, "ok",wxArticleDao.findAllKnowledges());
+        return new ResultCode(0, "ok", wxArticleDao.findAllKnowledges());
+    }
+
+    //取单个文章：openId
+    @GetMapping("/{articleId}")
+    ResultCode getKnowledgeList(@PathVariable("articleId") Long articleId) {
+        System.out.println("--articleId = [" + articleId + "]");
+        WxArticle wxArticle = wxArticleDao.findById(articleId);
+        System.out.println("---wxArticle = [" + wxArticle + "]");
+        return new ResultCode(0, "ok", wxArticleDao.findById(articleId));
     }
 
     //阅读历史：openId,articleId,shareOpenId
@@ -178,6 +204,30 @@ public class WxArticleController {
     ResultCode myFavoriteList(@PathVariable("openId") String openId) {
         return new ResultCode(0, "ok", wxArticleFavoriteDao.findByFavoriteOpenId(openId));
     }
+
+    //todo 根据shareId返回分享二维码
+    @GetMapping("/qrCodeIdByShareId/{shareId}")
+    ResultCode<Long> qrCodeIdByShareId(@PathVariable("shareId") Long shareId) {
+        if(shareId==0)
+          return new ResultCode(0, "ok", 9000800);//todo 测试我的二维码
+        WxArticleShareHistory wxArticleShareHistory= wxArticleShareHistoryDao.findOne(shareId);
+        String openId=wxArticleShareHistory.getShareOpenId();
+        WxUser wxUser= wxUserDao.findYctxqWxUserByOpenId(openId);
+        WxQrCode wxQrCode=wxQrCodeDao.findByWxUserId(wxUser.getId());
+        return new ResultCode(0, "ok", wxQrCode.getPictId());
+    }
+
+    //根据shareId返回微信二维码
+    @GetMapping("/wxQrCodeByShareId/{shareId}")
+    ResultCode<Long> wxQrCodeIdByShareId(@PathVariable("shareId") Long shareId) {
+        if (shareId == 0)
+            return new ResultCode(0, "ok", 0l);
+        else {
+
+            return null;
+        }
+    }
+
 
 }
 

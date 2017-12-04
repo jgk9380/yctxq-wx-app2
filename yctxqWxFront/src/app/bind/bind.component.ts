@@ -37,15 +37,14 @@ export class BindComponent implements OnInit {
 
   ngOnInit() {
     //todo 应该改造为service中返回observale
-    var x = this.httpClient.get(this.wxCodeService.getCodeToWxUserUrl() + this.wxCodeService.code).subscribe(data => {
-        var tempResult: any = data;
-        this.wxUser = tempResult.data;
-        this.newTele = this.wxUser.tele;
-        console.log("wxUser=" + JSON.stringify(this.wxUser));
-      }
-    );
-
-
+    // var x = this.httpClient.get(this.wxCodeService.getCodeToWxUserUrl() + this.wxCodeService.code).subscribe(data => {
+    //     var tempResult: any = data;
+    //     this.wxUser = tempResult.data;
+    //     this.newTele = this.wxUser.tele;
+    //     console.log("wxUser=" + JSON.stringify(this.wxUser));
+    //   }
+    // );
+    this.wxCodeService.getWxUser().then(x=>{this.wxUser=x;this.newTele=this.wxUser.tele})
   }
 
 

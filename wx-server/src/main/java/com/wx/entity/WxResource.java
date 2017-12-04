@@ -7,7 +7,7 @@ import javax.persistence.*;
 public class WxResource {
     @Id
     @Column
-    Integer id;
+    Long id;
     @Column
     String remark;
     @Lob
@@ -37,11 +37,11 @@ public class WxResource {
 
 
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

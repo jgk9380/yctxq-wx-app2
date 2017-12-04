@@ -2,19 +2,18 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes, PreloadAllModules} from '@angular/router';
 
 import {ArticleListComponent} from "./article-list/article-list.component";
-import {NewsComponent} from "./news/news.component";
-import {KnowledgesComponent} from "./knowledges/knowledges.component";
-import {MainComponent} from "./main.component";
+import {ArticleComponent} from "./article/article.component";
+import {ContentMainComponent} from "./content-main.component";
 
 
 
 const routes: Routes = [
   {
-    path: '', component:MainComponent,
+    path: '', component:ContentMainComponent,
     children: [
       {path: 'list', component: ArticleListComponent},
-      {path: 'news', component: NewsComponent},
-      {path: 'knowledge', component: KnowledgesComponent}
+      {path: 'article/:id', component: ArticleComponent},
+      // {path: 'knowledge', component: KnowledgesComponent}
     ]
   }
 ];
@@ -28,6 +27,6 @@ const routes: Routes = [
   ]
 })
 
-export class ArticleRouterModule {
+export class ContentRouterModule {
 
 }

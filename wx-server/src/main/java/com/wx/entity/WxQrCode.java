@@ -10,7 +10,7 @@ import javax.persistence.Table;
 public class WxQrCode {
     @Id
     @Column
-    Integer id;
+    Long id;
     @Column
     String url;
     @Column
@@ -18,13 +18,13 @@ public class WxQrCode {
     @Column
     Integer wxUserId;
     @Column
-    Integer pictId;
+    Long pictId;
 
-    public Integer getPictId() {
+    public Long getPictId() {
         return pictId;
     }
 
-    public void setPictId(Integer pictId) {
+    public void setPictId(Long pictId) {
         this.pictId = pictId;
     }
 
@@ -43,11 +43,11 @@ public class WxQrCode {
         return id != null ? id.hashCode() : 0;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

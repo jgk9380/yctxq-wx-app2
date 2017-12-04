@@ -15,12 +15,19 @@ public interface WxUserDao extends CrudRepository<WxUser, Long> {
     WxUser findById(long id);
     @Query(value = "select o from WxUser o where o.openId=:openId and o.wxApp.id=:appId")
     WxUser findByAppIdAndOpenId(@Param("appId") String appId, @Param("openId") String openId);
+
+    @Query(value = "select o from WxUser o where o.openId=:openId and o.wxApp.id='wx7dcc6b2e03a47c0b'")
+    WxUser findYctxqWxUserByOpenId(@Param("openId") String openId);
+
     @Query(value = "select o from WxUser o where o.tele=:tele and o.wxApp.id=:appId")
     WxUser findByTeleAndAppId(@Param("tele") String tele, @Param("appId") String appId);
+
     @Query(value = "select count(o) from WxUser o where o.referee=?1 and o.subscribeStatus=1")
     int getRefereeCount(WxUser wxUser);
+
     @Query(value = "select count(o) from WxUser o where o.referee=?1 and o.subscribeStatus=-1")
     int getRefereeCacelCount(WxUser wxUser);
+
     @Query(value = "select o from WxUser o where o.nickname is null and o.subscribeStatus=1 and o.wxApp.id=?1")
     List<WxUser> findNullNickUsers(String appId);
     @Query(value = "select unique referee_id from wx_user where  referee_id is not null",nativeQuery=true)

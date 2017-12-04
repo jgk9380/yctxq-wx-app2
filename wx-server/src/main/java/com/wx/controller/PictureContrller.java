@@ -26,7 +26,7 @@ public class PictureContrller {
     String batchUpload(HttpServletRequest request) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
         MultipartFile file = null;
-        int id = -1;
+        long id = -1;
         for (int i = 0; i < files.size(); ++i) {
             file = files.get(i);
             if (!file.isEmpty()) {
@@ -45,7 +45,7 @@ public class PictureContrller {
     @RequestMapping(value = "/resource_upload", method = RequestMethod.POST, produces = "text/html;charset=UTF-8")
     @ResponseBody
     public String upload(@RequestParam("file") MultipartFile file,@RequestParam(value = "remark",required = false)String remark) {
-        int id = -1;
+        long id = -1;
         if (!file.isEmpty()) {
             try {
                 id = uploadFile(file,remark);
@@ -59,7 +59,7 @@ public class PictureContrller {
 
     }
 
-    public int uploadFile(MultipartFile file,String remark) throws IOException {
+    public long uploadFile(MultipartFile file,String remark) throws IOException {
         //todo 文件名，ext为空什么情况？
         byte[] bytes = file.getBytes();
         String fileName = file.getOriginalFilename();
@@ -68,7 +68,7 @@ public class PictureContrller {
         //  stream.write(bytes);
         //  stream.close();
         WxResource wxPicture = new WxResource();
-        wxPicture.setId(wxUtils.getSeqencesValue().intValue());
+        wxPicture.setId(wxUtils.getSeqencesValue().longValue());
         wxPicture.setResourceContent(bytes);
         wxPicture.setFileName(fileName);
         if(remark!=null )wxPicture.setRemark(remark);
@@ -80,7 +80,7 @@ public class PictureContrller {
 
     //显示资源库中的图片
     @RequestMapping(path = "/show_pict/{id}", method = RequestMethod.GET)
-    public void showPicture(@PathVariable("id") int id,HttpServletResponse response) throws IOException {
+    public void showPicture(@PathVariable("id") long id,HttpServletResponse response) throws IOException {
         WxResource wxPicture= wxPictureDao.findById(id);
         if(!wxPicture.getFileType().equalsIgnoreCase("jpg"))
             return;

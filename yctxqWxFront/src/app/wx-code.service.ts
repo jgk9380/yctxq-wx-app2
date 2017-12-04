@@ -2,52 +2,48 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 
 import {Observable} from "rxjs";
-
+import {ResultCode} from "./result-code";
+import "rxjs/add/operator/map"
 @Injectable()
 export class WxCodeService {
   //baseUrl = "http://www.cu0515.com";
   baseUrl = "http://127.0.0.1:8888";
+  //appCommit中初始化
   code:string;
-  wxUser:any;
-  constructor(private  httpClient:HttpClient){}
-  // initWxUser():Observable<any>{
-  //   //alert("begin initWxUser.code="+this.code)
-  //   // var x = this.httpClient.get(this.baseUrl + "/wx/codeToOpenId/" + this.code).subscribe(data => {
-  //   //     var tempResult: any = data;
-  //   //     this.wxUser = tempResult.data;
-  //   //     alert("begin initWxUser. wxUser="+JSON.stringify(this.wxUser));
-  //   //     //this.newTele = this.wxUser.tele;
-  //   //     console.log("wxUser=" + JSON.stringify(this.wxUser));
-  //   //   }
-  //   // );
-  //   var x = this.httpClient.get(this.baseUrl + "/wx/codeToOpenId/" + this.code).map(data => {
-  //       var tempResult: any = data;
-  //       this.wxUser = tempResult.data;
-  //       //alert("begin initWxUser. wxUser="+JSON.stringify(this.wxUser));
-  //       //this.newTele = this.wxUser.tele;
-  //       console.log("wxUser=" + JSON.stringify(this.wxUser));
-  //       return this.wxUser;
-  //     }
-  //   );
-  //   return x;
-  // }
+  shareId:number;
+  wxUser:any;//app中初始化
 
-  getRequestParams() {
+  getWxUser():Promise<any>{
+    return  this.httpClient.get<ResultCode>(this.getCodeToWxUserUrl() +this.getCode()).map(data =>data.data).toPromise();
+  }
+
+  getShareId():number{
+    if(!this.shareId)
+      return 0;
+    return this.shareId;
+  }
+  getCode():string{
+    if(!this.code)
+      return "8346102";
+    return this.code;
+  }
+
+  constructor(private  httpClient:HttpClient){}
+   getRequestParams() {
     var url = "" + window.location; //获取url中"?"符后的字串
     var theRequest = new Object();
     console.log("url=" + url);
-    console.log("url.indexOf(?)=" + url.indexOf("?"));
+    // console.log("url.indexOf(?)=" + url.indexOf("?"));
     if (url.indexOf("?") != -1) {
       var str = url.substr(url.indexOf("?") + 1);
       if (str.indexOf("#") != -1) {
-        //截掉后部
-        str = str.substring(0, str.indexOf("#"))
+        str = str.substring(0, str.indexOf("#"))  //截掉后部
       }
       console.log("str=   " + str);
       var strs = str.split("&");
       for (var i = 0; i < strs.length; i++) {
         //theRequest[strs[i].split("=")[0]] = window.unescape(strs[i].split("=")[1]);
-        theRequest[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
+        theRequest[strs[i].split("=")[0]] = decodeURIComponent(strs[i].split("=")[1]);
       }
     }
     console.log("theRequest=" + JSON.stringify(theRequest))
@@ -56,7 +52,7 @@ export class WxCodeService {
 
 
   getCodeToWxUserUrl(){
-    if(!this.code||this.code.length==7)
+    if(!this.getCode()||this.getCode().length==7)
       return this.baseUrl+  "/wx/codeToOpenIdTestTest/";
     else
       return this.baseUrl+ "/wx/codeToOpenId/";

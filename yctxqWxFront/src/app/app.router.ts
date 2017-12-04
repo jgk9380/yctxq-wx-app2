@@ -10,11 +10,11 @@ import {AppComponent} from "./app.component";
 
 
 const routes: Routes = [
-  {path: '', redirectTo: '/main',pathMatch:"full"},
+  {path: '', redirectTo: '/',pathMatch:"full"},
   {path: 'bind', component: BindComponent},
   {path: 'scan', component: ScanComponent},
-  {path: 'article', loadChildren: "app/article/article.module#ArticleModule"},
-  {path: 'main', component: AppComponent}
+  {path: 'content', loadChildren: "app/content/content.module#ContentModule"},
+  // {path: 'main', component: AppComponent}
 ];
 
 @NgModule({

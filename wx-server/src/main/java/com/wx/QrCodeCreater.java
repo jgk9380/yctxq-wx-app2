@@ -79,7 +79,7 @@ public class QrCodeCreater {
 
     @Transactional
     public void createWxQrCode() throws WriterException, IOException {
-        int id = wxUtils.getSeqencesValue().intValue();
+        long id = wxUtils.getSeqencesValue().intValue();
         String url = qrCodeUrlTemplate.replace("STATE", "" + id);
         BufferedImage image = QRCodeUtil.zxingCodeCreateImage(url, 500, 500, "jpg");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -87,7 +87,7 @@ public class QrCodeCreater {
         byte[] b = out.toByteArray();
 
         WxResource wxResource = new WxResource();
-        int resourceId = wxUtils.getSeqencesValue().intValue();
+        long resourceId = wxUtils.getSeqencesValue().intValue();
         wxResource.setId(resourceId);
         wxResource.setResourceContent(b);
         wxResource.setRemark("二维码:" + id + "的图形");

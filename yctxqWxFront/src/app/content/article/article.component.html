@@ -1,0 +1,14 @@
+<div class="container-fluid article" *ngIf="wxArticle">
+  <h2 class="title" [innerHtml]="wxArticle.title"></h2>
+  <span class="second-title">{{getDate()|date:"yyyy-MM-dd "}}</span>
+  <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+  <span class="second-title">盐城通信圈</span>
+  <p></p>
+  <div [innerHtml]="wxArticle.content "></div>
+</div>
+
+<img class="qrCode" [src]="qrCodeUrl"/>
+
+wxqr={{wxQrCodeUrl}}
+<p></p>
+qr={{qrCodeUrl}}
