@@ -29,37 +29,39 @@
   <div class="container">
     <div id="footer" class="row">
       <div class="col-xs-2">
-        <input id="replay-input" type="text">
-      </div>
-      <div class="col-xs-1 col-xs-offset-1">
-        <!--收藏-->
+        <input id="replay-input" icon="fa-edit" pInputText   type="text" (focus)="showReplyDialog()" placeholder="写评论..." size="8em">
         <span class=" glyphicon glyphicon-edit"></span>
-        <!--<span class=" glyphicon glyphicon-heart-empty"></span>-->
       </div>
 
       <div class="col-xs-1 col-xs-offset-1"> <!--收藏-->
-        <span class="fa fa-star-o"  *ngIf="!articleOperate.favorite"   (click)="favriteArticle()" >{{wxArticle?.favoriteCount}}</span>
+        <span class="fa fa-star-o"  *ngIf="!articleOperate.favorite"   (click)="favriteArticle()" >{{wxArticle?.favoriteCount||0}}</span>
         <span class="fa fa-star"  *ngIf="articleOperate.favorite"   (click)="favriteArticle()">{{wxArticle?.favoriteCount}}</span>
       </div>
       <div class="col-xs-1 "><!--点赞-->
-        <span class="fa fa-thumbs-o-up" *ngIf="!articleOperate.like"  (click)="likeArticle()">{{wxArticle?.likeCount}}</span>
+        <span class="fa fa-thumbs-o-up" *ngIf="!articleOperate.like"  (click)="likeArticle()">{{wxArticle?.likeCount||0}}</span>
         <span class="fa fa-thumbs-up"     *ngIf="articleOperate.like"   (click)="likeArticle()" >{{wxArticle?.likeCount}}</span>
       </div>
       <div class="col-xs-1 ">        <!--讨厌-->
-        <span  *ngIf="!articleOperate.hate" class="fa fa-thumbs-o-down" (click)="hateArticle()">{{wxArticle?.hateCount}}</span>
+        <span  *ngIf="!articleOperate.hate" class="fa fa-thumbs-o-down" (click)="hateArticle()">{{wxArticle?.hateCount||0}}</span>
         <span *ngIf="articleOperate.hate"  class="fa fa-thumbs-down" (click)="hateArticle()">{{wxArticle?.hateCount}}</span>
       </div>
       <div class="col-xs-1 ">   <!--分享-->
-        <span class="glyphicon glyphicon-share">{{wxArticle?.shareCount}}</span>
+        <span class="glyphicon glyphicon-share">{{wxArticle?.shareCount||0}}</span>
       </div>
       <div class="col-xs-2 col-xs-offset-1">
-               <span >阅读数：{{wxArticle.readCount}}</span>
+               <span >阅读数：{{wxArticle.readCount||0}}</span>
       </div>
 
     </div>
   </div>
 </div>
 
+<p-dialog header="评论" [(visible)]="inputDialogShowed" modal="modal" width="300" [responsive]="true" [closable]="true">
+  <textarea rows="4" cols="30"  placeholder=" 评论内容..." pInputTextarea></textarea>
+  <p-footer>
+    <button type="button" pButton icon="fa-check" (click)="inputDialogShowed=false" label="提交"></button>
+  </p-footer>
+</p-dialog>
 
 <!--<p>wxqr={{wxQrCodeUrl|json}}</p>-->
 <!--<p>qr={{qrCodeUrl}}</p>-->

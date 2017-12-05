@@ -20,6 +20,7 @@ export class ArticleComponent implements OnInit {
   qrCodeUrl: string;
   wxQrCodeUrl: string;
   articleOperate: ArticleOperate=new ArticleOperate();
+  inputDialogShowed:boolean=false;
 
   toasterConfig: ToasterConfig =    new ToasterConfig({
       showCloseButton: true,
@@ -139,6 +140,9 @@ export class ArticleComponent implements OnInit {
     });
   }
 
+  showReplyDialog() {
+    this.inputDialogShowed = true;
+  }
 
 }
 

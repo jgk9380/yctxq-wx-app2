@@ -7,7 +7,7 @@
 @import url("../node_modules/bootstrap/dist/css/bootstrap.min.css");
 
 
-/*<link rel="stylesheet" type="text/css" href="YOUR_PATH/font-awesome.min.css" />*/
+
 
 /* TODO: this should really be in the component's CSS file, but it doesn't seem to apply to the PrimeNG data table properly there */
 .checking-row {

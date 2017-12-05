@@ -10,7 +10,7 @@ import {AppComponent} from "./app.component";
 
 
 const routes: Routes = [
-  {path: '', redirectTo: '/',pathMatch:"full"},
+  {path: '', redirectTo: '/content/list',pathMatch:"full"},
   {path: 'bind', component: BindComponent},
   {path: 'scan', component: ScanComponent},
   {path: 'content', loadChildren: "app/content/content.module#ContentModule"},

@@ -7,12 +7,16 @@ import {ArticleComponent} from './article/article.component';
 import {ContentMainComponent} from './content-main.component';
 import {ContentRouterModule} from "./content.router";
 import {ToasterService, ToasterModule} from "angular2-toaster";
+import {DialogModule,ButtonModule,InputTextareaModule} from 'primeng/primeng'
 @NgModule({
   imports: [
     CommonModule,
     ContentRouterModule,
     // HttpClientModule
-    ToasterModule
+    ToasterModule,
+    DialogModule,
+    ButtonModule,
+    InputTextareaModule
   ],
   declarations: [
     ArticleListComponent,
