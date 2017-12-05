@@ -22,11 +22,12 @@ import {WxCodeService} from "./wx-code.service";
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRouterModule,
     HttpClientModule,
     FormsModule,
     ToasterModule,
-    BrowserAnimationsModule
+
   ],
   providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy, },ToasterService,WxCodeService],//tomcat下路由刷新的问题
 

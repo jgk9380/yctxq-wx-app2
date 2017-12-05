@@ -24,13 +24,16 @@ input{
 }
 
 form{
-
   margin-top: 0.5em;
   padding-bottom: .5em;
   padding-top: .5em;
 }
 
-
+img{
+  display: block;
+  max-width: 100%;
+  height: auto !important;
+}
 
 
 

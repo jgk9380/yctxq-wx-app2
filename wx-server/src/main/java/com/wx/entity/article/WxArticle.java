@@ -47,7 +47,26 @@ public class WxArticle {
     @Column()
 //    FORWARD_COUNT
     Integer shareCount;
+    @Column
+    Integer likeCount;
+    @Column
+    Integer hateCount;
 
+    public Integer getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(Integer likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public Integer getHateCount() {
+        return hateCount;
+    }
+
+    public void setHateCount(Integer hateCount) {
+        this.hateCount = hateCount;
+    }
 
     public Long getId() {
         return id;

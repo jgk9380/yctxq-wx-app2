@@ -181,10 +181,8 @@ public class WxUserServiceController {
         WxUser wxUser = wxManager.getWxUser(openId);
         if (wxUser == null || wxUser.getSubscribeStatus() != 1)
             return new ResultCode<>(1, "userSubscripeStatus error", null);
-
         return new ResultCode<>(0, "ok", qrCodeCreater.getWxUserPermQrCde(wxUser.getId().intValue()));
     }
-
 }
 
 

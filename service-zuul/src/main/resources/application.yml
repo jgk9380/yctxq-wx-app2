@@ -15,17 +15,15 @@ zuul:
 #    api-b:
 #      path: /api-b/**
 #      serviceId: service-feign
-
-
-
       wx-front:
         path: /wx-front/**
         url: http://www.cu0515.com:8030/wxfront/
-
+      main-root:
+        path: /
+        url: http://www.cu0515.com:8030/yclt/
       wx-html:
         path: /*.html
         url: http://www.cu0515.com:8030/wxfront/
-
       wx-back:
             path: /**
             url: http://www.cu0515.com:8888/
