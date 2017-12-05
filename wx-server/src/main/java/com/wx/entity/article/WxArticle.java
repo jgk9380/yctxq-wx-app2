@@ -51,6 +51,16 @@ public class WxArticle {
     Integer likeCount;
     @Column
     Integer hateCount;
+    @Column
+    Integer replyCount;
+
+    public Integer getReplyCount() {
+        return replyCount;
+    }
+
+    public void setReplyCount(Integer replyCount) {
+        this.replyCount = replyCount;
+    }
 
     public Integer getLikeCount() {
         return likeCount;

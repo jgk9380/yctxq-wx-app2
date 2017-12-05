@@ -28,9 +28,10 @@
 <div class="navbar navbar-default navbar-fixed-bottom"  *ngIf="wxArticle">
   <div class="container">
     <div id="footer" class="row">
-      <div class="col-xs-2">
+      <div class="col-xs-3">
         <input id="replay-input" icon="fa-edit" pInputText   type="text" (focus)="showReplyDialog()" placeholder="写评论..." size="8em">
         <span class=" glyphicon glyphicon-edit"></span>
+        <span>{{wxArticle?.replyCount||0}}</span>
       </div>
 
       <div class="col-xs-1 col-xs-offset-1"> <!--收藏-->

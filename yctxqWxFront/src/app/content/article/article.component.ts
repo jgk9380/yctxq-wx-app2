@@ -5,7 +5,7 @@ import 'rxjs/add/operator/map';
 import {HttpClient} from "@angular/common/http";
 import {WxCodeService} from "../../wx-code.service";
 import {ResultCode} from "../../result-code";
-import {ToasterService,ToasterConfig} from 'angular2-toaster';
+import {ToasterConfig, ToasterService} from 'angular2-toaster';
 
 // import {Observable} from 'rxjs/Observable';
 
@@ -19,15 +19,15 @@ export class ArticleComponent implements OnInit {
   wxArticle: any;
   qrCodeUrl: string;
   wxQrCodeUrl: string;
-  articleOperate: ArticleOperate=new ArticleOperate();
-  inputDialogShowed:boolean=false;
+  articleOperate: ArticleOperate = new ArticleOperate();
+  inputDialogShowed: boolean = false;
 
-  toasterConfig: ToasterConfig =    new ToasterConfig({
-      showCloseButton: true,
-      tapToDismiss: true,
-      timeout: 1000,
-      positionClass: "toast-center"
-    });
+  toasterConfig: ToasterConfig = new ToasterConfig({
+    showCloseButton: true,
+    tapToDismiss: true,
+    timeout: 1000,
+    positionClass: "toast-center"
+  });
 
   constructor(private route: ActivatedRoute, private  httpClient: HttpClient, private  wxCodeService: WxCodeService, private  toasterService: ToasterService) {
 
@@ -37,26 +37,28 @@ export class ArticleComponent implements OnInit {
     // this.route.paramMap
     //   .switchMap((params: ParamMap) => this.heroService.getHero(+params.get('id')))
     //   .subscribe(hero => this.hero = hero);
-    this.route.paramMap
-      .map((params: ParamMap) => {
-        console.log("id=" + params.get("id"));
-        return "" + params.get("id");
-      }).subscribe(x => {
-      //console.log("x in subscribe="+x);
-      let articleUrl = this.wxCodeService.baseUrl + "/public/article/" + x;
-      console.log("articleUrl=" + articleUrl);
-      this.httpClient.get<ResultCode>(articleUrl).subscribe(
-        data => {
-          this.wxArticle = data.data;
+
+    //根据articleId初始化wxArticle数据。
+    this.route.paramMap .map((params: ParamMap) => {"" + params.get("id")})
+      .subscribe(x => {
+            let articleUrl = this.wxCodeService.baseUrl + "/public/article/" + x;
+            this.httpClient.get<ResultCode>(articleUrl).subscribe(data => {
+                this.wxArticle = data.data;
+                //TODO 保存阅读数据
+
         }
       )
     });
 
+    //取传播二维码
     this.getQrCodeUrl().then(x => {
       this.qrCodeUrl = this.wxCodeService.baseUrl + "/public/show_pict/" + x;
       console.log("qrCodeUrl=" + this.qrCodeUrl);
     });
-    this.getWxQrCodeUrl().then(x => this.wxQrCodeUrl = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + x.ticket)
+
+    //取微信二维码
+    this.getWxQrCodeUrl().then(x => this.wxQrCodeUrl = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + x.ticket);
+
 
   }
 
@@ -84,13 +86,13 @@ export class ArticleComponent implements OnInit {
   favriteArticle() {
     this.articleOperate.favorite = !this.articleOperate.favorite;
     if (this.articleOperate.favorite)
-      this.wxArticle.favoriteCount = (this.wxArticle.favoriteCount||0)+1;
+      this.wxArticle.favoriteCount = (this.wxArticle.favoriteCount || 0) + 1;
     else
       this.wxArticle.favoriteCount = this.wxArticle.favoriteCount - 1;
     this.toasterService.pop({
       type: 'success',
       title: "ok",
-      body: this.articleOperate.favorite ?"收藏成功":"不收藏了",
+      body: this.articleOperate.favorite ? "收藏成功" : "不收藏了",
       showCloseButton: true,
     });
   }
@@ -99,21 +101,21 @@ export class ArticleComponent implements OnInit {
     this.articleOperate.like = !this.articleOperate.like;
 
     if (this.articleOperate.like)
-      this.wxArticle.likeCount = (this.wxArticle.likeCount||0)+ 1;
+      this.wxArticle.likeCount = (this.wxArticle.likeCount || 0) + 1;
     else
       this.wxArticle.likeCount = this.wxArticle.likeCount - 1;
 
     if (this.articleOperate.like) {
-      if (this.articleOperate.hate){
-        this.articleOperate.hate=false;
-        this.wxArticle.hateCount = (this.wxArticle.hateCount||0) -1;
+      if (this.articleOperate.hate) {
+        this.articleOperate.hate = false;
+        this.wxArticle.hateCount = (this.wxArticle.hateCount || 0) - 1;
       }
     }
-    console.log("like="+this.articleOperate.like+"  likeCoutnt="+this.wxArticle.likeCount);
+    console.log("like=" + this.articleOperate.like + "  likeCoutnt=" + this.wxArticle.likeCount);
     this.toasterService.pop({
       type: 'success',
       title: "ok",
-      body: this.articleOperate.like ?"赞了一下":"不赞了",
+      body: this.articleOperate.like ? "赞了一下" : "不赞了",
       showCloseButton: true,
     });
   }
@@ -122,20 +124,20 @@ export class ArticleComponent implements OnInit {
     console.log("hate it ");
     this.articleOperate.hate = !this.articleOperate.hate
     if (this.articleOperate.hate)
-      this.wxArticle.hateCount = (this.wxArticle.hateCount||0)+1;
+      this.wxArticle.hateCount = (this.wxArticle.hateCount || 0) + 1;
     else
       this.wxArticle.hateCount = this.wxArticle.hateCount - 1;
 
     if (this.articleOperate.hate) {
       if (this.articleOperate.like) {
-        this.articleOperate.like=false;
+        this.articleOperate.like = false;
         this.wxArticle.likeCount = this.wxArticle.likeCount - 1;
       }
     }
     this.toasterService.pop({
       type: 'success',
       title: "ok",
-      body: this.articleOperate.hate ?"踩了一下":"不踩了",
+      body: this.articleOperate.hate ? "踩了一下" : "不踩了",
       showCloseButton: true,
     });
   }

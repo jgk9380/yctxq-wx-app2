@@ -46,7 +46,7 @@ public class WxArticleController {
     //新闻列表:参数:openId
     @GetMapping("/newsList/{openId}")
     ResultCode getNewList(@PathVariable("openId") String openId) {
-        return new ResultCode(0, "ok", wxArticleDao.findAllNews().stream().map(x -> {
+        return new ResultCode(0, "ok", wxArticleDao.findAllNews().subList(0,20).stream().map(x -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id", x.getId());
             jsonObject.put("title", x.getTitle());
@@ -56,10 +56,15 @@ public class WxArticleController {
         }).toArray());
     }
 
-
     //通信知识列表：openId
     @GetMapping("/knowledgesList/{openId}")
     ResultCode getKnowledgeList(@PathVariable("openId") String openId) {
+        return new ResultCode(0, "ok", wxArticleDao.findAllKnowledges());
+    }
+
+    //收藏列表：openId
+    @GetMapping("/favoriteList/{openId}")
+    ResultCode getFavoriteList(@PathVariable("openId") String openId) {
         return new ResultCode(0, "ok", wxArticleDao.findAllKnowledges());
     }
 
@@ -77,20 +82,24 @@ public class WxArticleController {
     @Transactional
     ResultCode setReadHistory(@PathVariable("openId") String openId, @PathVariable("articleId") Long articleId
             , @PathVariable("shareId") Long shareId) {
+        System.out.println("in setReadHistory openId = [" + openId + "], articleId = [" + articleId + "], shareId = [" + shareId + "]");
         //1、readCount+1
         WxArticle wxArticle = wxArticleDao.findById(articleId);
         wxArticle.setReadCount(wxArticle.getReadCount() + 1);
         wxArticleDao.save(wxArticle);
-
+        WxArticleReadHistory warh=wxArticleReadHistoryDao.findByArticleIdAndReaderOpenId(articleId,openId);
         //2、记录具体阅读信息.
-        WxArticleReadHistory wxArticleReadHistory = new WxArticleReadHistory();
-        wxArticleReadHistory.setId(wxUtils.getSeqencesValue().longValue());
-        wxArticleReadHistory.setArticleId(articleId);
-        wxArticleReadHistory.setReaderOpenId(openId);
-        wxArticleReadHistory.setShareId(shareId);
-        wxArticleReadHistory.setReadDate(new Date());
-        WxArticleReadHistory result = wxArticleReadHistoryDao.save(wxArticleReadHistory);
-        return new ResultCode(0, "success", result);
+        if(warh==null) {
+            WxArticleReadHistory wxArticleReadHistory = new WxArticleReadHistory();
+            wxArticleReadHistory.setId(wxUtils.getSeqencesValue().longValue());
+            wxArticleReadHistory.setArticleId(articleId);
+            wxArticleReadHistory.setReaderOpenId(openId);
+            wxArticleReadHistory.setShareId(shareId);
+            wxArticleReadHistory.setReadDate(new Date());
+            WxArticleReadHistory result = wxArticleReadHistoryDao.save(wxArticleReadHistory);
+            return new ResultCode(0, "success", result);
+        }
+        return new ResultCode(0, "exits", "已经存在");
     }
 
     //点赞：参数 openId，articleId,shareOpenId;

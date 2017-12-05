@@ -36,7 +36,7 @@
  }
 
  .navbar{
-   /*height: 1.1em;*/
+   height: 2em;
    min-height: 2.0em;
-   max-height: 2.0em;
+   max-height: 4.0em;
  }
