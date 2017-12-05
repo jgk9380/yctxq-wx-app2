@@ -23,24 +23,18 @@ public class WxArticleController {
     WxArticleDao wxArticleDao;
     @Autowired
     WxUserDao wxUserDao;
-
     @Autowired
     WxUtils wxUtils;
     //    @Autowired
     //    JdbcTemplate jdbcTemplate;
-
     @Autowired
     WxArticleReadHistoryDao wxArticleReadHistoryDao;
-
     @Autowired
     WxArticlePraiseDao wxArticlePraiseDao;
-
     @Autowired
     WxArticleShareHistoryDao wxArticleShareHistoryDao;
-
     @Autowired
     WxArticleFavoriteDao wxArticleFavoriteDao;
-
     @Autowired
     WxArticleDiscussDao wxArticleDiscussDao;
     @Autowired
@@ -227,8 +221,6 @@ public class WxArticleController {
             return null;
         }
     }
-
-
 }
 
 //

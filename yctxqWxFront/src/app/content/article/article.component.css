@@ -35,8 +35,8 @@
    font-size: 0.9em;
  }
 
- /*.navbar{*/
-   /*!*height: 1.1em;*!*/
-   /*min-height: 2.0em;*/
-   /*max-height: 2.0em;*/
- /*}*/
+ .navbar{
+   /*height: 1.1em;*/
+   min-height: 2.0em;
+   max-height: 2.0em;
+ }

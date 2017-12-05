@@ -5,6 +5,7 @@ import 'rxjs/add/operator/map';
 import {HttpClient} from "@angular/common/http";
 import {WxCodeService} from "../../wx-code.service";
 import {ResultCode} from "../../result-code";
+import {ToasterService,ToasterConfig} from 'angular2-toaster';
 
 // import {Observable} from 'rxjs/Observable';
 
@@ -18,10 +19,17 @@ export class ArticleComponent implements OnInit {
   wxArticle: any;
   qrCodeUrl: string;
   wxQrCodeUrl: string;
-  articleOperate: ArticleOperate;
+  articleOperate: ArticleOperate=new ArticleOperate();
 
-  constructor(private route: ActivatedRoute, private  httpClient: HttpClient, private  wxCodeService: WxCodeService) {
-    this.articleOperate=new ArticleOperate();
+  toasterConfig: ToasterConfig =    new ToasterConfig({
+      showCloseButton: true,
+      tapToDismiss: true,
+      timeout: 1000,
+      positionClass: "toast-center"
+    });
+
+  constructor(private route: ActivatedRoute, private  httpClient: HttpClient, private  wxCodeService: WxCodeService, private  toasterService: ToasterService) {
+
   }
 
   ngOnInit() {
@@ -78,6 +86,12 @@ export class ArticleComponent implements OnInit {
       this.wxArticle.favoriteCount = (this.wxArticle.favoriteCount||0)+1;
     else
       this.wxArticle.favoriteCount = this.wxArticle.favoriteCount - 1;
+    this.toasterService.pop({
+      type: 'success',
+      title: "ok",
+      body: this.articleOperate.favorite ?"收藏成功":"不收藏了",
+      showCloseButton: true,
+    });
   }
 
   likeArticle() {
@@ -95,6 +109,12 @@ export class ArticleComponent implements OnInit {
       }
     }
     console.log("like="+this.articleOperate.like+"  likeCoutnt="+this.wxArticle.likeCount);
+    this.toasterService.pop({
+      type: 'success',
+      title: "ok",
+      body: this.articleOperate.like ?"赞了一下":"不赞了",
+      showCloseButton: true,
+    });
   }
 
   hateArticle() {
@@ -111,7 +131,12 @@ export class ArticleComponent implements OnInit {
         this.wxArticle.likeCount = this.wxArticle.likeCount - 1;
       }
     }
-
+    this.toasterService.pop({
+      type: 'success',
+      title: "ok",
+      body: this.articleOperate.hate ?"踩了一下":"不踩了",
+      showCloseButton: true,
+    });
   }
 
 
