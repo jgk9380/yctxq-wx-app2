@@ -5,16 +5,16 @@ import "rxjs/add/operator/map"
 
 @Injectable()
 export class WxCodeService {
-  //baseUrl = "http://www.cu0515.com";
-  baseUrl = "http://127.0.0.1:8888";
+  baseUrl = "http://www.cu0515.com";
+  //baseUrl = "http://127.0.0.1:8888";
   //appCommit中初始化
   code: string;
   shareId: number;
+  wxUser:any;
 
   //private  wxUser:any;//todo app中初始化
 
   getWxUser(): Promise<any> {
-
     return this.httpClient.get<ResultCode>(this.getCodeToWxUserUrl() + this.getCode()).map(data => data.data).toPromise();
   }
 

@@ -6,53 +6,53 @@
   <span class="second-title">盐城通信圈</span>
   <p></p>
   <div [innerHtml]="wxArticle.content "></div>
+
   <div class="row">
-    <div class="col-xs-4 col-xs-offset-2">
+    <div class="col-xs-5 ">
       <img class="qrCode" [src]="qrCodeUrl"/>
     </div>
-    <div class="col-xs-4 col-xs-offset-2">
+    <div class="col-xs-5 col-xs-offset-1">
       <img class="qrCode" [src]="wxQrCodeUrl"/>
     </div>
   </div>
+
   <div class="row">
-    <div class="col-xs-4 col-xs-offset-2">
-      <span class="qrTitle">长按关注盐城通信圈，<br/>获取更多通信知识</span>
-    </div>
-    <div class="col-xs-4 col-xs-offset-2">
+    <div class="col-xs-6 ">
       <span class="qrTitle">长按免费体验<br/>“腾讯大王卡”</span>
     </div>
+    <div class="col-xs-6">
+      <span class="qrTitle">关注通信圈，<br/>获取通信知识</span>
+    </div>
   </div>
-
 </div>
 
 <div class="navbar navbar-default navbar-fixed-bottom"  *ngIf="wxArticle">
   <div class="container">
     <div id="footer" class="row">
-      <div class="col-xs-3">
-        <input id="replay-input" icon="fa-edit" pInputText   type="text" (focus)="showReplyDialog()" placeholder="写评论..." size="8em">
-        <span class=" glyphicon glyphicon-edit"></span>
-        <span>{{wxArticle?.replyCount||0}}</span>
-      </div>
+      <!--<div class="col-xs-3">-->
+        <!--<input id="replay-input" icon="fa-edit" pInputText   type="text" (focus)="showReplyDialog()" placeholder="写评论..." size="8em">-->
+        <!--<span class=" glyphicon glyphicon-edit"></span>-->
+        <!--<span>{{wxArticle?.replyCount||0}}</span>-->
+      <!--</div>-->
 
-      <div class="col-xs-1 col-xs-offset-1"> <!--收藏-->
+      <div class="col-xs-1"> <!--收藏-->
         <span class="fa fa-star-o"  *ngIf="!articleOperate.favorite"   (click)="favriteArticle()" >{{wxArticle?.favoriteCount||0}}</span>
         <span class="fa fa-star"  *ngIf="articleOperate.favorite"   (click)="favriteArticle()">{{wxArticle?.favoriteCount}}</span>
       </div>
-      <div class="col-xs-1 "><!--点赞-->
+      <div class="col-xs-1 col-xs-offset-1 "><!--点赞-->
         <span class="fa fa-thumbs-o-up" *ngIf="!articleOperate.like"  (click)="likeArticle()">{{wxArticle?.likeCount||0}}</span>
         <span class="fa fa-thumbs-up"     *ngIf="articleOperate.like"   (click)="likeArticle()" >{{wxArticle?.likeCount}}</span>
       </div>
-      <div class="col-xs-1 ">        <!--讨厌-->
+      <div class="col-xs-1 col-xs-offset-1">        <!--讨厌-->
         <span  *ngIf="!articleOperate.hate" class="fa fa-thumbs-o-down" (click)="hateArticle()">{{wxArticle?.hateCount||0}}</span>
         <span *ngIf="articleOperate.hate"  class="fa fa-thumbs-down" (click)="hateArticle()">{{wxArticle?.hateCount}}</span>
       </div>
-      <div class="col-xs-1 ">   <!--分享-->
+      <div class="col-xs-1 col-xs-offset-1">   <!--分享-->
         <span class="glyphicon glyphicon-share">{{wxArticle?.shareCount||0}}</span>
       </div>
-      <div class="col-xs-2 col-xs-offset-1">
+      <div class="col-xs-4 ">
                <span >阅读数：{{wxArticle.readCount||0}}</span>
       </div>
-
     </div>
   </div>
 </div>
@@ -67,9 +67,6 @@
 <!--<p>wxqr={{wxQrCodeUrl|json}}</p>-->
 <!--<p>qr={{qrCodeUrl}}</p>-->
 <!--<p>imgUrl={{imgUrl}}</p>-->
-
-
-
 <!--<div style="text-align:center">-->
   <!--<p> 我是一个喜欢图标&nbsp;&nbsp;<span class="glyphicon glyphicon-heart"></span></p >-->
   <!--<p> 我是一个空心图标&nbsp;&nbsp;<span class="glyphicon glyphicon-heart-empty"></span></p >-->

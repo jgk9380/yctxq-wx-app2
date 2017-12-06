@@ -156,6 +156,23 @@ create table wx_article_favorite  --文章收藏历史，用于我的收藏
 )
 
 
+create table wx_article_like  --文章收藏历史，用于我的收藏
+(
+   id integer primary key,
+   article_id references wx_article,
+   favoriter_open_id varchar2(60),
+   oper_date date default sysdate
+)
+
+create table wx_article_hate  --文章收藏历史，用于我的收藏
+(
+   id integer primary key,
+   article_id references wx_article,
+   favoriter_open_id varchar2(60),
+   oper_date date default sysdate
+)
+
+
 create table wx_article_discuss(   --文章评论历史。
   id         INTEGER   primary key,
   article_id references wx_article,

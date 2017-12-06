@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import sun.tools.jar.CommandLine;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Base64;
 
 @Component
 //todo 运行一次，推送菜单
@@ -20,11 +22,18 @@ public class MenuPusher {
             "&redirect_uri=http://www.cu0515.com/URL&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
     Button knowledge() {
         Button buttons[] = new Button[3];
-        String url=baseUrl.replace("URL","articlelist.html").replace("STATE","1");
+        String tempUrl="/wx-front/#/content/news-list";
+        tempUrl= URLEncoder.encode(tempUrl);
+        String url=baseUrl.replace("URL",tempUrl);//.replace("STATE","1");
         buttons[0] = new ViewButton("通信新闻", url);
-        url=url.replace("STATE","2");
-        buttons[1] = new ViewButton("通信趣事", url);//推送图文
+        tempUrl="/wx-front/#content/knowledge-list";
+        tempUrl= URLEncoder.encode(tempUrl);
+         url=baseUrl.replace("URL",tempUrl);
+        buttons[1] = new ViewButton("通信知识", url);//推送图文
         url=url.replace("STATE","3");
+        tempUrl="/wx-front/#/content/favorite-list";
+        tempUrl= URLEncoder.encode(tempUrl);
+        url=baseUrl.replace("URL",tempUrl);
         buttons[2] = new ViewButton("我的收藏", url);//推送图文
         ComplexButton complexButton = new ComplexButton("通信知识", buttons);
         return complexButton;
@@ -46,7 +55,7 @@ public class MenuPusher {
         Button buttons[] = new Button[1];
 //http://www.cu0515.com/wx-front/#bind
         String url= "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx7dcc6b2e03a47c0b&redirect_uri=http%3A%2F%2Fwww.cu0515.com%2Fwx-front%2F%23bind&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
-        buttons[0] = new ViewButton("号码绑定", url);
+        buttons[0] = new ViewButton("我的信息", url);
         //buttons[2] = new ViewButton("有奖活动", "http://www.sohu.com");
         ComplexButton complexButton = new ComplexButton("@我", buttons);
         //return complexButton;
@@ -54,10 +63,10 @@ public class MenuPusher {
     }
 
     Menu getMenu() {
-        Button buttons[] = new Button[2];
-       // buttons[0] = this.knowledge();
-        buttons[0] = this.financing();
-        buttons[1] = this.me();
+        Button buttons[] = new Button[3];
+        buttons[0] = this.knowledge();
+        buttons[1] = this.financing();
+        buttons[2] = this.me();
         Menu menu = new Menu(buttons);
         return menu;
     }

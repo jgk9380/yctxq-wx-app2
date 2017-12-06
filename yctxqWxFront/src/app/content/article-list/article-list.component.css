@@ -1,6 +1,6 @@
 .titleImg{
-  height: 2em;
-  width: 2em;
+  height: 3em;
+  width: 3em;
 }
 
 .second-title{
@@ -14,4 +14,8 @@ ul{
 
 li{
   margin-top:0.5em ;
+}
+.container-fluid{
+  font-size: 1.2em;
+  margin-left: -2em;
 }

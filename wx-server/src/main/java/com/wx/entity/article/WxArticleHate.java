@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import java.util.Date;
 
 @Entity
-public class WxArticleFavorite {
+public class WxArticleHate {
     @Id
     @Column
     Long id;
@@ -15,25 +15,13 @@ public class WxArticleFavorite {
     Long articleId;
 
     @Column()
-    String favoriterOpenId;
+    String openId;
 
     @Column
-    Date favoriteDate;
-
-    @Column
-    String shareOpenId;
+    Date operDate;
 
     @Column
     Long shareId;
-
-
-    public Long getShareId() {
-        return shareId;
-    }
-
-    public void setShareId(Long shareId) {
-        this.shareId = shareId;
-    }
 
     public Long getId() {
         return id;
@@ -51,28 +39,28 @@ public class WxArticleFavorite {
         this.articleId = articleId;
     }
 
-    public String getFavoriterOpenId() {
-        return favoriterOpenId;
+    public String getOpenId() {
+        return openId;
     }
 
-    public void setFavoriterOpenId(String favoriterOpenId) {
-        this.favoriterOpenId = favoriterOpenId;
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 
-    public Date getFavoriteDate() {
-        return favoriteDate;
+    public Date getOperDate() {
+        return operDate;
     }
 
-    public void setFavoriteDate(Date favoriteDate) {
-        this.favoriteDate = favoriteDate;
+    public void setOperDate(Date operDate) {
+        this.operDate = operDate;
     }
 
-    public String getShareOpenId() {
-        return shareOpenId;
+    public Long getShareId() {
+        return shareId;
     }
 
-    public void setShareOpenId(String shareOpenId) {
-        this.shareOpenId = shareOpenId;
+    public void setShareId(Long shareId) {
+        this.shareId = shareId;
     }
 
     @Override
@@ -80,7 +68,7 @@ public class WxArticleFavorite {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        WxArticleFavorite that = (WxArticleFavorite) o;
+        WxArticleHate that = (WxArticleHate) o;
 
         return id != null ? id.equals(that.id) : that.id == null;
     }

@@ -39,16 +39,29 @@ export class ArticleComponent implements OnInit {
     //   .subscribe(hero => this.hero = hero);
 
     //根据articleId初始化wxArticle数据。
-    this.route.paramMap .map((params: ParamMap) => {"" + params.get("id")})
+    this.route.paramMap.map((params: ParamMap) => {
+      return "" + params.get("id")
+    })//return 不能少；
       .subscribe(x => {
-            let articleUrl = this.wxCodeService.baseUrl + "/public/article/" + x;
-            this.httpClient.get<ResultCode>(articleUrl).subscribe(data => {
-                this.wxArticle = data.data;
-                //TODO 保存阅读数据
-
-        }
-      )
-    });
+        let articleUrl = this.wxCodeService.baseUrl + "/public/article/" + x;
+        console.log("articleUrl=" + articleUrl);
+        this.httpClient.get<ResultCode>(articleUrl).subscribe(data => {
+            this.wxArticle = data.data;
+            //todo 保存阅读次数及阅读记录数据
+            ///readArticle/{articleId}/{openId}/{shareId}
+            let articleReadHistoryUrl: string= this.wxCodeService.baseUrl + "/public/article/readArticle/" + this.wxArticle.id + "/" + this.wxCodeService.wxUser.openId + "/" + this.wxCodeService.getShareId();
+            console.log("articleReadHistoryUrl=" + articleReadHistoryUrl);
+            this.httpClient.post<ResultCode>(articleReadHistoryUrl, {})
+              .toPromise()
+              .then(x => console.log("readHistory returns:" + JSON.stringify(x)));
+            //todo 初始化数据
+          let initialStatusUrl: string= this.wxCodeService.baseUrl + "/public/article/initialStatus/" + this.wxArticle.id + "/" + this.wxCodeService.wxUser.openId ;
+          this.httpClient.get<ResultCode>(initialStatusUrl, {})
+            .toPromise()
+            .then(x => {this.articleOperate=x.data;console.log("x.data="+JSON.stringify(x.data))});
+          }
+        )
+      });
 
     //取传播二维码
     this.getQrCodeUrl().then(x => {
@@ -85,61 +98,131 @@ export class ArticleComponent implements OnInit {
 
   favriteArticle() {
     this.articleOperate.favorite = !this.articleOperate.favorite;
-    if (this.articleOperate.favorite)
+    if (this.articleOperate.favorite) {
+      //favoriteArticle/{articleId}/{openId}/{shareId}
+      let favoriteArticleUrl = this.wxCodeService.baseUrl + "/public/article/favoriteArticle/"
+        + this.wxArticle.id + "/" + this.wxCodeService.wxUser.openId + "/" + this.wxCodeService.getShareId();
+      console.log("favoriteArticleUrl=" + favoriteArticleUrl);
+      this.httpClient.post<ResultCode>(favoriteArticleUrl, {})
+        .toPromise()
+        .then(x => {
+            console.log("x=" + JSON.stringify(x));
+            this.toasterService.pop({type: 'success', title: "ok", body: x.msg, showCloseButton: true,});
+          }
+        );
       this.wxArticle.favoriteCount = (this.wxArticle.favoriteCount || 0) + 1;
-    else
+    }
+    else {
+      let cancelFavoriteArticleUrl = this.wxCodeService.baseUrl + "/public/article/cancelfavoriteArticle/"
+        + this.wxArticle.id + "/" + this.wxCodeService.wxUser.openId;
+      console.log("favoriteArticleUrl=" + cancelFavoriteArticleUrl);
+      this.httpClient.post<ResultCode>(cancelFavoriteArticleUrl, {})
+        .toPromise()
+        .then(x => this.toasterService.pop({type: 'success', title: "ok", body: x.msg, showCloseButton: true,})
+        );
       this.wxArticle.favoriteCount = this.wxArticle.favoriteCount - 1;
-    this.toasterService.pop({
-      type: 'success',
-      title: "ok",
-      body: this.articleOperate.favorite ? "收藏成功" : "不收藏了",
-      showCloseButton: true,
-    });
+    }
   }
 
   likeArticle() {
     this.articleOperate.like = !this.articleOperate.like;
 
-    if (this.articleOperate.like)
+    if (this.articleOperate.like) {
+      this.backLikeArticle();
       this.wxArticle.likeCount = (this.wxArticle.likeCount || 0) + 1;
-    else
+    }
+    else {
+      this.backCancelLikeArticle();
       this.wxArticle.likeCount = this.wxArticle.likeCount - 1;
+    }
 
     if (this.articleOperate.like) {
       if (this.articleOperate.hate) {
         this.articleOperate.hate = false;
         this.wxArticle.hateCount = (this.wxArticle.hateCount || 0) - 1;
+        this.backCancelHateArticle();
       }
     }
     console.log("like=" + this.articleOperate.like + "  likeCoutnt=" + this.wxArticle.likeCount);
-    this.toasterService.pop({
+
+    // this.toasterService.pop({
+    //   type: 'success',
+    //   title: "ok",
+    //   body: this.articleOperate.like ? "赞了一下" : "不赞了",
+    //   showCloseButton: true,
+    // });
+
+  }
+
+  backLikeArticle() {
+    let likeArticleUrl = this.wxCodeService.baseUrl + "/public/article/likeArticle/"
+      + this.wxArticle.id + "/" + this.wxCodeService.wxUser.openId + "/" + this.wxCodeService.getShareId();
+    this.httpClient.post<ResultCode>(likeArticleUrl, {}).toPromise().then(x => this.toasterService.pop({
       type: 'success',
       title: "ok",
-      body: this.articleOperate.like ? "赞了一下" : "不赞了",
+      body: x.msg,
       showCloseButton: true,
-    });
+    }));
   }
+
+  backCancelLikeArticle() {
+    let cancelLikeArticleUrl = this.wxCodeService.baseUrl + "/public/article/cancelLikeArticle/"
+      + this.wxArticle.id + "/" + this.wxCodeService.wxUser.openId;
+    this.httpClient.post<ResultCode>(cancelLikeArticleUrl, {}).toPromise().then(x => this.toasterService.pop({
+      type: 'success',
+      title: "ok",
+      body: x.msg,
+      showCloseButton: true,
+    }));
+  }
+
+  backHateArticle() {
+    let hateArticleUrl = this.wxCodeService.baseUrl + "/public/article/hateArticle/"
+      + this.wxArticle.id + "/" + this.wxCodeService.wxUser.openId + "/" + this.wxCodeService.getShareId();
+    this.httpClient.post<ResultCode>(hateArticleUrl, {}).toPromise().then(x => this.toasterService.pop({
+      type: 'success',
+      title: "ok",
+      body: x.msg,
+      showCloseButton: true,
+    }));
+  }
+
+  backCancelHateArticle() {
+    let cancelHateArticleUrl = this.wxCodeService.baseUrl + "/public/article/cancelHateArticle/"
+      + this.wxArticle.id + "/" + this.wxCodeService.wxUser.openId;
+    this.httpClient.post<ResultCode>(cancelHateArticleUrl, {}).toPromise().then(x => this.toasterService.pop({
+      type: 'success',
+      title: "success",
+      body: x.msg,
+      showCloseButton: true,
+    }));
+  }
+
 
   hateArticle() {
     console.log("hate it ");
     this.articleOperate.hate = !this.articleOperate.hate
-    if (this.articleOperate.hate)
-      this.wxArticle.hateCount = (this.wxArticle.hateCount || 0) + 1;
-    else
-      this.wxArticle.hateCount = this.wxArticle.hateCount - 1;
-
     if (this.articleOperate.hate) {
+      this.wxArticle.hateCount = (this.wxArticle.hateCount || 0) + 1;
+      this.backHateArticle();
       if (this.articleOperate.like) {
         this.articleOperate.like = false;
         this.wxArticle.likeCount = this.wxArticle.likeCount - 1;
+        this.backCancelLikeArticle();
       }
     }
-    this.toasterService.pop({
-      type: 'success',
-      title: "ok",
-      body: this.articleOperate.hate ? "踩了一下" : "不踩了",
-      showCloseButton: true,
-    });
+    else {
+      this.backCancelHateArticle()
+      this.wxArticle.hateCount = this.wxArticle.hateCount - 1;
+    }
+
+
+    // this.toasterService.pop({
+    //   type: 'success',
+    //   title: "ok",
+    //   body: this.articleOperate.hate ? "踩了一下" : "不踩了",
+    //   showCloseButton: true,
+    // });
   }
 
   showReplyDialog() {

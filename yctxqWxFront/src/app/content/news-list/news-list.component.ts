@@ -1,16 +1,17 @@
-///<reference path="../../result-code.ts"/>
-import {Component, OnInit} from '@angular/core';
-import {WxCodeService} from "../../wx-code.service";
-import {HttpClient} from "@angular/common/http";
+import { Component, OnInit } from '@angular/core';
 import {ResultCode} from "../../result-code";
+import {WxCodeService} from "../../wx-code.service";
+import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 
 @Component({
-  selector: 'app-article-list',
-  templateUrl: './article-list.component.html',
-  styleUrls: ['./article-list.component.css']
+  selector: 'app-news-list',
+  // templateUrl: './news-list.component.html',
+  // styleUrls: ['./news-list.component.css']
+  templateUrl: '../article-list/article-list.component.html',
+  styleUrls: ['../article-list/article-list.component.css']
 })
-export class ArticleListComponent implements OnInit {
+export class NewsListComponent implements OnInit {
   wxUser: {openId:string};
   articleList:any[];
 
@@ -20,9 +21,9 @@ export class ArticleListComponent implements OnInit {
   ngOnInit() {
     var x = this.httpClient.get<ResultCode>(this.wxCodeService.getCodeToWxUserUrl() + this.wxCodeService.getCode()).subscribe(data => {
         this.wxUser = data["data"];
-      //console.log(`wxUser=${JSON.stringify(this.wxUser)}`);
-      this.httpClient.get<ResultCode>(this.wxCodeService.baseUrl + "/public/article/newsList/" + this.wxUser.openId).subscribe(data1 => {
-        console.log("artcleList="+JSON.stringify(data1));
+        //console.log(`wxUser=${JSON.stringify(this.wxUser)}`);
+        this.httpClient.get<ResultCode>(this.wxCodeService.baseUrl + "/public/article/newsList/" + this.wxUser.openId).subscribe(data1 => {
+          console.log("artcleList="+JSON.stringify(data1));
           this.articleList=data1.data;
           //console.log("artcleList="+JSON.stringify(this.articleList));
         })
@@ -42,5 +43,6 @@ export class ArticleListComponent implements OnInit {
     console.log("clicked "+id);
     this.router.navigate(['/content/article', id]);
   }
+
 
 }

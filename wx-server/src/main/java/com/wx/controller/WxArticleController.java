@@ -39,6 +39,10 @@ public class WxArticleController {
     WxArticleDiscussDao wxArticleDiscussDao;
     @Autowired
     WxQrCodeDao wxQrCodeDao;
+    @Autowired
+    WxArticleLikeDao wxArticleLikeDao;
+    @Autowired
+    WxArticleHateDao wxArticleHateDao;
 
     //todo ?所有分享上一个分享痕迹。 shareId
 
@@ -46,7 +50,7 @@ public class WxArticleController {
     //新闻列表:参数:openId
     @GetMapping("/newsList/{openId}")
     ResultCode getNewList(@PathVariable("openId") String openId) {
-        return new ResultCode(0, "ok", wxArticleDao.findAllNews().subList(0,20).stream().map(x -> {
+        return new ResultCode(0, "ok", wxArticleDao.findAllNews().subList(0, 20).stream().map(x -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id", x.getId());
             jsonObject.put("title", x.getTitle());
@@ -65,7 +69,9 @@ public class WxArticleController {
     //收藏列表：openId
     @GetMapping("/favoriteList/{openId}")
     ResultCode getFavoriteList(@PathVariable("openId") String openId) {
-        return new ResultCode(0, "ok", wxArticleDao.findAllKnowledges());
+        List<WxArticleFavorite> l = wxArticleFavoriteDao.findByFavoriterOpenId(openId);
+        return new ResultCode(0, "ok", l.stream().map(x -> wxArticleDao.findById(x.getArticleId())).toArray());
+
     }
 
     //取单个文章：openId
@@ -77,29 +83,64 @@ public class WxArticleController {
         return new ResultCode(0, "ok", wxArticleDao.findById(articleId));
     }
 
+    //取收藏，hate，like 数据
+    @GetMapping("/initialStatus/{articleId}/{openId}")
+    ResultCode getInitalStatus(@PathVariable("articleId") Long articleId, @PathVariable("openId") String openId) {
+
+        JSONObject jsonObject = new JSONObject();
+        //    class ArticleOperate {
+        //        favorite: boolean;
+        //        like: boolean;
+        //        hate: boolean;
+        //    }
+        if(wxArticleFavoriteDao.findByArticleIdAndFavoriterOpenId(articleId,openId)!=null)
+            jsonObject.put("favorite",true);
+        else
+            jsonObject.put("favorite",false);
+
+        if(wxArticleLikeDao.findByArticleIdAndOpenId(articleId,openId)!=null)
+            jsonObject.put("like",true);
+        else
+            jsonObject.put("like",false);
+
+        if(wxArticleHateDao.findByArticleIdAndOpenId(articleId,openId)!=null)
+            jsonObject.put("hate",true);
+        else
+            jsonObject.put("hate",false);
+
+        return new ResultCode(0, "ok", jsonObject);
+    }
+
     //阅读历史：openId,articleId,shareOpenId
     @PostMapping("/readArticle/{articleId}/{openId}/{shareId}")
     @Transactional
-    ResultCode setReadHistory(@PathVariable("openId") String openId, @PathVariable("articleId") Long articleId
+    ResultCode readHistory(@PathVariable("openId") String openId, @PathVariable("articleId") Long articleId
             , @PathVariable("shareId") Long shareId) {
         System.out.println("in setReadHistory openId = [" + openId + "], articleId = [" + articleId + "], shareId = [" + shareId + "]");
         //1、readCount+1
-        WxArticle wxArticle = wxArticleDao.findById(articleId);
-        wxArticle.setReadCount(wxArticle.getReadCount() + 1);
-        wxArticleDao.save(wxArticle);
-        WxArticleReadHistory warh=wxArticleReadHistoryDao.findByArticleIdAndReaderOpenId(articleId,openId);
+
+        WxArticleReadHistory warh = wxArticleReadHistoryDao.findByArticleIdAndReaderOpenId(articleId, openId);
         //2、记录具体阅读信息.
-        if(warh==null) {
+        if (warh == null) {
             WxArticleReadHistory wxArticleReadHistory = new WxArticleReadHistory();
             wxArticleReadHistory.setId(wxUtils.getSeqencesValue().longValue());
             wxArticleReadHistory.setArticleId(articleId);
             wxArticleReadHistory.setReaderOpenId(openId);
             wxArticleReadHistory.setShareId(shareId);
             wxArticleReadHistory.setReadDate(new Date());
+            //修改文章中的阅读数
+            WxArticle wxArticle = wxArticleDao.findById(articleId);
+            if (wxArticle.getReadCount() == null)
+                wxArticle.setReadCount(1);
+            else
+                wxArticle.setReadCount(wxArticle.getReadCount() + 1);
+            wxArticleDao.save(wxArticle);
+            //保存阅读记录
             WxArticleReadHistory result = wxArticleReadHistoryDao.save(wxArticleReadHistory);
             return new ResultCode(0, "success", result);
+
         }
-        return new ResultCode(0, "exits", "已经存在");
+        return new ResultCode(1, "readHistory is exist", "阅读记录已经存在");
     }
 
     //点赞：参数 openId，articleId,shareOpenId;
@@ -154,22 +195,147 @@ public class WxArticleController {
     @Transactional
     ResultCode favoriteArticle(@PathVariable("openId") String openId, @PathVariable("articleId") Long articleId
             , @PathVariable("shareId") long shareId) {
-
-        //1、favoriteCount+1
-        WxArticle wxArticle = wxArticleDao.findById(articleId);
-        wxArticle.setFavoriteCount(wxArticle.getFavoriteCount() + 1);
-        wxArticleDao.save(wxArticle);
-
+        System.out.println("openId = [" + openId + "], articleId = [" + articleId + "], shareId = [" + shareId + "]");
         //2、记录favorite信息.
-        WxArticleFavorite wxArticleFavorite = new WxArticleFavorite();
-        wxArticleFavorite.setId(wxUtils.getSeqencesValue().longValue());
-        wxArticleFavorite.setArticleId(articleId);
-        wxArticleFavorite.setFavoriteOpenId(openId);
-        wxArticleFavorite.setFavoriteDate(new Date());
-        wxArticleFavorite.setShareId(shareId);
-        WxArticleFavorite result = wxArticleFavoriteDao.save(wxArticleFavorite);
-        return new ResultCode(0, "ok", result);
+        WxArticleFavorite warf = wxArticleFavoriteDao.findByArticleIdAndFavoriterOpenId(articleId, openId);
+        if (warf == null) {
+            WxArticleFavorite wxArticleFavorite = new WxArticleFavorite();
+            wxArticleFavorite.setId(wxUtils.getSeqencesValue().longValue());
+            wxArticleFavorite.setArticleId(articleId);
+            wxArticleFavorite.setFavoriterOpenId(openId);
+            wxArticleFavorite.setFavoriteDate(new Date());
+            wxArticleFavorite.setShareId(shareId);
+            //保存文章的收藏数据
+            //1、favoriteCount+1
+            WxArticle wxArticle = wxArticleDao.findById(articleId);
+            if (wxArticle.getFavoriteCount() == null)
+                wxArticle.setFavoriteCount(1);
+            else
+                wxArticle.setFavoriteCount(wxArticle.getFavoriteCount() + 1);
+            wxArticleDao.save(wxArticle);
+            //保存文章收藏记录
+            WxArticleFavorite result = wxArticleFavoriteDao.save(wxArticleFavorite);
+            return new ResultCode(0, "收藏成功", result);
+        }
+        return new ResultCode(1, "ok", "已经存在");
     }
+
+    //取消收藏FAVORITE:openId,articleId,,
+    @PostMapping("/cancelfavoriteArticle/{articleId}/{openId}")
+    @Transactional
+    ResultCode cancelFavoriteArticle(@PathVariable("openId") String openId, @PathVariable("articleId") Long articleId) {
+        System.out.println("openId = [" + openId + "], articleId = [" + articleId + "]");
+        //2、记录favorite信息.
+        WxArticleFavorite wxArticleFavorite = wxArticleFavoriteDao.findByArticleIdAndFavoriterOpenId(articleId, openId);
+        if (wxArticleFavorite != null) {
+            wxArticleFavoriteDao.delete(wxArticleFavorite.getId());
+            WxArticle wxArticle = wxArticleDao.findById(articleId);
+            wxArticle.setFavoriteCount(wxArticle.getFavoriteCount() - 1);
+            wxArticleDao.save(wxArticle);
+            return new ResultCode(0, "取消收藏", "no data");
+        }
+        return new ResultCode(-1, "no data", "no data");
+    }
+
+    //todo like
+    //like:openId,articleId,shareOpenId,
+    @PostMapping("/likeArticle/{articleId}/{openId}/{shareId}")
+    @Transactional
+    ResultCode likeArticle(@PathVariable("openId") String openId, @PathVariable("articleId") Long articleId
+            , @PathVariable("shareId") long shareId) {
+        System.out.println("openId = [" + openId + "], articleId = [" + articleId + "], shareId = [" + shareId + "]");
+        //2、记录favorite信息.
+        WxArticleLike warf = wxArticleLikeDao.findByArticleIdAndOpenId(articleId, openId);
+        if (warf == null) {
+            WxArticleLike wxArticleLike = new WxArticleLike();
+            wxArticleLike.setId(wxUtils.getSeqencesValue().longValue());
+            wxArticleLike.setArticleId(articleId);
+            wxArticleLike.setOpenId(openId);
+            wxArticleLike.setOperDate(new Date());
+            wxArticleLike.setShareId(shareId);
+            //保存文章的收藏数据
+            //1、favoriteCount+1
+            WxArticle wxArticle = wxArticleDao.findById(articleId);
+            if (wxArticle.getLikeCount() == null)
+                wxArticle.setLikeCount(1);
+            else
+                wxArticle.setLikeCount(wxArticle.getLikeCount() + 1);
+            wxArticleDao.save(wxArticle);
+            //保存文章收藏记录
+            WxArticleLike result = wxArticleLikeDao.save(wxArticleLike);
+            return new ResultCode(0, "喜欢这篇文章", result);
+        }
+        return new ResultCode(1, "ok", "已经存在");
+    }
+
+    //cancleLike:openId,articleId,,
+    @PostMapping("/cancelLikeArticle/{articleId}/{openId}")
+    @Transactional
+    ResultCode cancelLikeArticle(@PathVariable("openId") String openId, @PathVariable("articleId") Long articleId) {
+        WxArticleLike warf = wxArticleLikeDao.findByArticleIdAndOpenId(articleId, openId);
+        if (warf != null) {
+            //保存文章的收藏数据
+            //1、favoriteCount+1
+            WxArticle wxArticle = wxArticleDao.findById(articleId);
+            wxArticle.setLikeCount(wxArticle.getLikeCount() - 1);
+            wxArticleDao.save(wxArticle);
+            //保存文章收藏记录
+            wxArticleLikeDao.delete(warf.getId());
+            return new ResultCode(0, "不太喜欢", "");
+        }
+        return new ResultCode(1, "nodata", "bu存在");
+    }
+
+    //todo  hate
+
+    //hate:openId,articleId,shareOpenId,
+    @PostMapping("/hateArticle/{articleId}/{openId}/{shareId}")
+    @Transactional
+    ResultCode hateArticle(@PathVariable("openId") String openId, @PathVariable("articleId") Long articleId
+            , @PathVariable("shareId") long shareId) {
+        System.out.println("openId = [" + openId + "], articleId = [" + articleId + "], shareId = [" + shareId + "]");
+        //2、记录favorite信息.
+        WxArticleHate warf = wxArticleHateDao.findByArticleIdAndOpenId(articleId, openId);
+        if (warf == null) {
+            WxArticleHate wxArticleHate = new WxArticleHate();
+            wxArticleHate.setId(wxUtils.getSeqencesValue().longValue());
+            wxArticleHate.setArticleId(articleId);
+            wxArticleHate.setOpenId(openId);
+            wxArticleHate.setOperDate(new Date());
+            wxArticleHate.setShareId(shareId);
+            //保存文章的收藏数据
+            //1、favoriteCount+1
+            WxArticle wxArticle = wxArticleDao.findById(articleId);
+            if (wxArticle.getHateCount() == null)
+                wxArticle.setHateCount(1);
+            else
+                wxArticle.setHateCount(wxArticle.getHateCount() + 1);
+            wxArticleDao.save(wxArticle);
+            //保存文章收藏记录
+            WxArticleHate result = wxArticleHateDao.save(wxArticleHate);
+            return new ResultCode(0, "讨厌这篇文章", result);
+        }
+        return new ResultCode(1, "ok", "已经存在");
+    }
+
+    //cancleHate:openId,articleId,,
+    @PostMapping("/cancelHateArticle/{articleId}/{openId}")
+    @Transactional
+    ResultCode cancelHateArticle(@PathVariable("openId") String openId, @PathVariable("articleId") Long articleId) {
+        WxArticleHate warf = wxArticleHateDao.findByArticleIdAndOpenId(articleId, openId);
+        if (warf != null) {
+            WxArticle wxArticle = wxArticleDao.findById(articleId);
+            wxArticle.setHateCount(wxArticle.getHateCount() - 1);
+            wxArticleDao.save(wxArticle);
+            //保存文章收藏记录
+            wxArticleHateDao.delete(warf.getId());
+            return new ResultCode(0, "还行，不讨厌", "");
+        }
+        return new ResultCode(1, "ok", "bu存在");
+    }
+
+    //todo
+
 
     //回复列表:articleId,parentId
     @GetMapping("/articleDiscussList/{articleId}/{parentId}")
@@ -178,7 +344,6 @@ public class WxArticleController {
             return new ResultCode(0, "ok", wxArticleDiscussDao.findRootDiscuss(articleId));
         else
             return new ResultCode(0, "ok", wxArticleDiscussDao.findByArticleIdAndAndParentId(articleId, parentId));
-
     }
 
     //回复：openId,articleId,parentId
@@ -205,18 +370,18 @@ public class WxArticleController {
     //我的收藏：openId,articleId,shareId
     @GetMapping("/myFavoriteList/{openId}")
     ResultCode myFavoriteList(@PathVariable("openId") String openId) {
-        return new ResultCode(0, "ok", wxArticleFavoriteDao.findByFavoriteOpenId(openId));
+        return new ResultCode(0, "ok", wxArticleFavoriteDao.findByFavoriterOpenId(openId));
     }
 
     //todo 根据shareId返回分享二维码
     @GetMapping("/qrCodeIdByShareId/{shareId}")
     ResultCode<Long> qrCodeIdByShareId(@PathVariable("shareId") Long shareId) {
-        if(shareId==0)
-          return new ResultCode(0, "ok", 9000800);//todo 测试我的二维码
-        WxArticleShareHistory wxArticleShareHistory= wxArticleShareHistoryDao.findOne(shareId);
-        String openId=wxArticleShareHistory.getShareOpenId();
-        WxUser wxUser= wxUserDao.findYctxqWxUserByOpenId(openId);
-        WxQrCode wxQrCode=wxQrCodeDao.findByWxUserId(wxUser.getId());
+        if (shareId == 0)
+            return new ResultCode(0, "ok", 9000800);//todo 测试我的二维码
+        WxArticleShareHistory wxArticleShareHistory = wxArticleShareHistoryDao.findOne(shareId);
+        String openId = wxArticleShareHistory.getShareOpenId();
+        WxUser wxUser = wxUserDao.findYctxqWxUserByOpenId(openId);
+        WxQrCode wxQrCode = wxQrCodeDao.findByWxUserId(wxUser.getId());
         return new ResultCode(0, "ok", wxQrCode.getPictId());
     }
 

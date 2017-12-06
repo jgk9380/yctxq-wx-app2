@@ -14,6 +14,19 @@
   <meta content="email=no" name="format-detection">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <!--<link rel="stylesheet" type="text/css" href="/node_modules/angular2-toaster/toaster.css" />-->
+
+  <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+
+  <script>
+    $(function () {
+      var needRefresh = sessionStorage.getItem("need-refresh");
+      if(needRefresh){
+        sessionStorage.removeItem("need-refresh");
+        location.reload();
+      }
+    });
+  </script>
+
 </head>
 <body ontouchstart="ontouchstart">
 
