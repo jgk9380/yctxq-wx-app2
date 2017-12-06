@@ -19,20 +19,20 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-xs-8 col-xs-offset-2 ">
-      <img class="qrCode" [src]="wxQrCodeUrl"/>
-      {{wxQrCodeUrl}}
-    </div>
-  </div>
+  <!--<div class="row">-->
+    <!--<div class="col-xs-8 col-xs-offset-2 ">-->
+      <!--<img class="qrCode" [src]="wxQrCodeUrl"/>-->
+      <!--{{wxQrCodeUrl}}-->
+    <!--</div>-->
+  <!--</div>-->
 
 
-  <div class="row">
-    <div class="col-xs-8 col-xs-offset-2 ">
-      <span class="qrTitle">关注“盐城通信圈”，获取更多通信知识</span>
-    </div>
-  </div>
-</div>
+  <!--<div class="row">-->
+    <!--<div class="col-xs-8 col-xs-offset-2 ">-->
+      <!--<span class="qrTitle">关注“盐城通信圈”，获取更多通信知识</span>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</div>-->
 
 <div class="navbar navbar-default navbar-fixed-bottom"  *ngIf="wxArticle">
   <div class="container">
@@ -51,14 +51,14 @@
         <span class="fa fa-thumbs-o-up" *ngIf="!articleOperate.like"  (click)="likeArticle()">{{wxArticle?.likeCount||0}}</span>
         <span class="fa fa-thumbs-up"     *ngIf="articleOperate.like"   (click)="likeArticle()" >{{wxArticle?.likeCount}}</span>
       </div>
-      <div class="col-xs-1 col-xs-offset-1">        <!--讨厌-->
-        <span  *ngIf="!articleOperate.hate" class="fa fa-thumbs-o-down" (click)="hateArticle()">{{wxArticle?.hateCount||0}}</span>
-        <span *ngIf="articleOperate.hate"  class="fa fa-thumbs-down" (click)="hateArticle()">{{wxArticle?.hateCount}}</span>
-      </div>
+      <!--<div class="col-xs-1 col-xs-offset-1">        &lt;!&ndash;讨厌&ndash;&gt;-->
+        <!--<span  *ngIf="!articleOperate.hate" class="fa fa-thumbs-o-down" (click)="hateArticle()">{{wxArticle?.hateCount||0}}</span>-->
+        <!--<span *ngIf="articleOperate.hate"  class="fa fa-thumbs-down" (click)="hateArticle()">{{wxArticle?.hateCount}}</span>-->
+      <!--</div>-->
       <div class="col-xs-1 col-xs-offset-1">   <!--分享-->
         <span class="glyphicon glyphicon-share">{{wxArticle?.shareCount||0}}</span>
       </div>
-      <div class="col-xs-4 ">
+      <div class="col-xs-4 col-xs-offset-1">
                <span >阅读数：{{wxArticle.readCount||0}}</span>
       </div>
     </div>

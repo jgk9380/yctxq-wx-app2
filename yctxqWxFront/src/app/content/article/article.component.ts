@@ -75,7 +75,7 @@ export class ArticleComponent implements OnInit {
     //取微信二维码
     this.getWxQrCodeUrl().then(y => {
       this.wxQrCodeUrl = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + y.ticket;
-      alert(this.wxQrCodeUrl)
+      //alert(this.wxQrCodeUrl)
     });
 
 
