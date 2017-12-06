@@ -8,20 +8,28 @@
   <div [innerHtml]="wxArticle.content "></div>
 
   <div class="row">
-    <div class="col-xs-5 ">
+    <div class="col-xs-8 col-xs-offset-2 ">
       <img class="qrCode" [src]="qrCodeUrl"/>
-    </div>
-    <div class="col-xs-5 col-xs-offset-1">
-      <img class="qrCode" [src]="wxQrCodeUrl"/>
     </div>
   </div>
 
   <div class="row">
-    <div class="col-xs-6 ">
-      <span class="qrTitle">长按免费体验<br/>“腾讯大王卡”</span>
+    <div class="col-xs-8 col-xs-offset-2 ">
+      <span class="qrTitle">长按免费体验“腾讯王卡”</span>
     </div>
-    <div class="col-xs-6">
-      <span class="qrTitle">关注通信圈，<br/>获取通信知识</span>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-8 col-xs-offset-2 ">
+      <img class="qrCode" [src]="wxQrCodeUrl"/>
+      {{wxQrCodeUrl}}
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-xs-8 col-xs-offset-2 ">
+      <span class="qrTitle">关注“盐城通信圈”，获取更多通信知识</span>
     </div>
   </div>
 </div>

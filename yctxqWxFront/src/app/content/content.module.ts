@@ -11,6 +11,7 @@ import {DialogModule,ButtonModule,InputTextareaModule} from 'primeng/primeng';
 import { NewsListComponent } from './news-list/news-list.component';
 import { KnowsledgesListComponent } from './knowsledges-list/knowsledges-list.component';
 import { FavoriteListComponent } from './favorite-list/favorite-list.component'
+import {WxArticleService} from "./article-service";
 @NgModule({
   imports: [
     CommonModule,
@@ -29,7 +30,7 @@ import { FavoriteListComponent } from './favorite-list/favorite-list.component'
     KnowsledgesListComponent,
     FavoriteListComponent
   ],
-  providers:[ToasterService]
+  providers:[ToasterService,WxArticleService]
 })
 
 export class ContentModule {

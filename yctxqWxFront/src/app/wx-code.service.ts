@@ -6,7 +6,7 @@ import "rxjs/add/operator/map"
 @Injectable()
 export class WxCodeService {
   baseUrl = "http://www.cu0515.com";
-  //baseUrl = "http://127.0.0.1:8888";
+  // baseUrl = "http://127.0.0.1:8888";
   //appCommit中初始化
   code: string;
   shareId: number;

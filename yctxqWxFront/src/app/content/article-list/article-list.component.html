@@ -5,7 +5,7 @@
 <span class="second-title">通信新闻</span>
 <div class="container-fluid">
   <ul>
-    <li *ngFor="let article of articleList">
+    <li *ngFor="let article of wxArticleService.articleList">
       <div class="row">
         <div class="col-offset-xs-1 col-xs-9">
           <span class="title" (click)="clickTitle(article.id)">{{article.title}}</span>

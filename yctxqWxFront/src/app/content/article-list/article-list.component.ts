@@ -4,6 +4,7 @@ import {WxCodeService} from "../../wx-code.service";
 import {HttpClient} from "@angular/common/http";
 import {ResultCode} from "../../result-code";
 import {Router} from '@angular/router';
+import {WxArticleService} from "../article-service";
 
 @Component({
   selector: 'app-article-list',
@@ -12,20 +13,14 @@ import {Router} from '@angular/router';
 })
 export class ArticleListComponent implements OnInit {
   wxUser: {openId:string};
-  articleList:any[];
 
-  constructor(public wxCodeService: WxCodeService, private  httpClient: HttpClient,private  router:Router) {
+  constructor(public wxCodeService: WxCodeService, private  httpClient: HttpClient,private  router:Router ,public  wxArticleService:WxArticleService) {
   }
 
   ngOnInit() {
     var x = this.httpClient.get<ResultCode>(this.wxCodeService.getCodeToWxUserUrl() + this.wxCodeService.getCode()).subscribe(data => {
         this.wxUser = data["data"];
-      //console.log(`wxUser=${JSON.stringify(this.wxUser)}`);
-      this.httpClient.get<ResultCode>(this.wxCodeService.baseUrl + "/public/article/newsList/" + this.wxUser.openId).subscribe(data1 => {
-        console.log("artcleList="+JSON.stringify(data1));
-          this.articleList=data1.data;
-          //console.log("artcleList="+JSON.stringify(this.articleList));
-        })
+        this.wxArticleService.getNewsArticle(this.wxUser);
       }
     );
   }
@@ -42,5 +37,4 @@ export class ArticleListComponent implements OnInit {
     console.log("clicked "+id);
     this.router.navigate(['/content/article', id]);
   }
-
 }

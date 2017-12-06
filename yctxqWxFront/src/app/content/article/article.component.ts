@@ -49,16 +49,19 @@ export class ArticleComponent implements OnInit {
             this.wxArticle = data.data;
             //todo 保存阅读次数及阅读记录数据
             ///readArticle/{articleId}/{openId}/{shareId}
-            let articleReadHistoryUrl: string= this.wxCodeService.baseUrl + "/public/article/readArticle/" + this.wxArticle.id + "/" + this.wxCodeService.wxUser.openId + "/" + this.wxCodeService.getShareId();
+            let articleReadHistoryUrl: string = this.wxCodeService.baseUrl + "/public/article/readArticle/" + this.wxArticle.id + "/" + this.wxCodeService.wxUser.openId + "/" + this.wxCodeService.getShareId();
             console.log("articleReadHistoryUrl=" + articleReadHistoryUrl);
             this.httpClient.post<ResultCode>(articleReadHistoryUrl, {})
               .toPromise()
               .then(x => console.log("readHistory returns:" + JSON.stringify(x)));
             //todo 初始化数据
-          let initialStatusUrl: string= this.wxCodeService.baseUrl + "/public/article/initialStatus/" + this.wxArticle.id + "/" + this.wxCodeService.wxUser.openId ;
-          this.httpClient.get<ResultCode>(initialStatusUrl, {})
-            .toPromise()
-            .then(x => {this.articleOperate=x.data;console.log("x.data="+JSON.stringify(x.data))});
+            let initialStatusUrl: string = this.wxCodeService.baseUrl + "/public/article/initialStatus/" + this.wxArticle.id + "/" + this.wxCodeService.wxUser.openId;
+            this.httpClient.get<ResultCode>(initialStatusUrl, {})
+              .toPromise()
+              .then(x => {
+                this.articleOperate = x.data;
+                console.log("x.data=" + JSON.stringify(x.data))
+              });
           }
         )
       });
@@ -70,7 +73,10 @@ export class ArticleComponent implements OnInit {
     });
 
     //取微信二维码
-    this.getWxQrCodeUrl().then(x => this.wxQrCodeUrl = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + x.ticket);
+    this.getWxQrCodeUrl().then(y => {
+      this.wxQrCodeUrl = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + y.ticket;
+      alert(this.wxQrCodeUrl)
+    });
 
 
   }
